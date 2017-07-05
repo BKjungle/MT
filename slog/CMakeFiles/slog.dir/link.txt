@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC    -shared -Wl,-soname,libslog.so -o libslog.so CMakeFiles/slog.dir/slog_api.cpp.o  -L/root/TeamTalk/server/src/slog/.  -L/root/TeamTalk/server/src/slog/./lib -llog4cxx -Wl,-rpath,/root/TeamTalk/server/src/slog/.:/root/TeamTalk/server/src/slog/./lib 
