@@ -45,6 +45,7 @@ public:
 	int ID;
 	struct MemoryStruct chunk;
 	int fromid;
+	int msg_id;
 public:
 	void SendAndGet_Turing(CImPdu* pPdu);
 	void SwitchP2P(CImPdu* pPdu);

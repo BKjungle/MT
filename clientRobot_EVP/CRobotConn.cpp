@@ -45,6 +45,7 @@ int CRobotConn::analyse()
         switch (code)
         {
         	case text:
+        	case numover:
         		var = ForText(&chunk.memory,root);
         		chunk.size = 0;
         		break;
@@ -66,8 +67,10 @@ int CRobotConn::analyse()
   				chunk.size = 0;
   				break;
   				
-  			case 40007:
-  				log("code 400007 Exception  ,%s ",root["text"].asString().c_str());
+  			case fmterror:
+  			case nullinfo:
+  			case keyfault:
+  				log("code %d Exception  ,%s ",code,root["text"].asString().c_str());
   				free(chunk.memory); //本次接受的数据清除，下次接受重新开辟空间
   				chunk.memory = NULL;
   				chunk.size = 0; 
@@ -112,7 +115,7 @@ size_t CRobotConn::ResDate()
 			
 		msgData.set_from_user_id(ID);
 		msgData.set_to_session_id(fromid);
-		msgData.set_msg_id(1);//必须设置, msg_server 否则解析失败 	
+		msgData.set_msg_id(msg_id+1);//必须设置, msg_server 否则解析失败 	
 		msgData.set_create_time(get_tick_count());
 		msgData.set_msg_type(IM::BaseDefine::MSG_TYPE_SINGLE_TEXT);		
 		msgData.set_msg_data((const char *)EnEnd);//------------------------------------organize ok
@@ -360,7 +363,7 @@ void CRobotConn::SendAndGet_Turing(CImPdu* pPdu)
 			log(" not MSG_TYPE_SINGLE_TEXT");
 			return ;
 		}
-	uint32_t msg_id = msg.msg_id();
+	msg_id = msg.msg_id();
 	const string msgdata =  msg.msg_data();
 	
  

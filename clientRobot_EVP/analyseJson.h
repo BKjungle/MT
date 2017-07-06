@@ -14,7 +14,14 @@ enum JsonType{
 	news = 302000,
 	menu = 308000,
 	song = 313000,
-	poem = 314000,
+	poem = 314000
+	
+};
+enum ErrorCode{
+	keyfault = 40001,
+	nullinfo = 40002,
+	numover  = 40004,
+	fmterror = 40007
 };
 
 bool ForText(char ** str,Json::Value & root);
