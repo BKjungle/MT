@@ -38,11 +38,9 @@ void FileClientConnTimerCallback(void* callback_data, uint8_t msg, uint32_t hand
         
         FileClientConn* conn = (FileClientConn*)it_old->second;
        // conn->OnTimer(cur_time);
-		log("befor  ->OnTimer ");
 		//if(conn != NULL){
 			conn->OnTimer(cur_time);
 		//	}
-        log("after  ->OnTimer ");
     }
 }
 
@@ -468,7 +466,27 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
         }
         
         rv =  transfer_task_->DoPullFileRequest(user_id, offset, datasize, pull_data_rsp.mutable_file_data());
-        
+       // add 7.14 
+		if( 32768 == transfer_task_->GetNextOffset() ) // 32768 == SEGMENT_SIZE
+			{
+				InfoNotify NotifyMsg;
+				IM::BaseDefine::OfflineFileInfo* pInfo = NotifyMsg.add_offline_file_list();
+				pInfo->set_from_user_id(transfer_task_->to_user_id());
+                pInfo->set_task_id(task_id);
+                pInfo->set_file_name(transfer_task_->file_name());
+                pInfo->set_file_size(transfer_task_->file_size());
+                pInfo->set_file_md5(transfer_task_->file_md5());
+				pInfo->set_status(5);				// 开始下载， transfering 。变更数据库状态为正在下载
+				
+				CImPdu pdu;
+    
+			    pdu.SetPBMsg(&NotifyMsg);
+			    pdu.SetServiceId(SID_OTHER);
+			    pdu.SetCommandId(CID_FILE_Notify_dbserver);
+				Send_to_msgserver(&pdu);
+				log(" After  Send to msgserver 5 ok ");
+			}
+       // add end 
         if (rv == -1) {
             break;
         }
@@ -488,10 +506,9 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
             SendMessageLite(this, SID_FILE, CID_FILE_PULL_DATA_RSP, pdu->GetSeqNum(), &pull_data_rsp);
             if (rv == 1) {
                 _StatesNotify(CLIENT_FILE_DONE,FILE_DOWNLOAD, task_id, transfer_task_->from_user_id(), this);
-				//--add 6.16 . for   notify to msgserver  
+				//--add 7.14 . for   notify to msgserver change mysql file_status  
 				log(" log  StatesNotify ok to  recver ");
 				// build pPdu 
-				/*
 				InfoNotify NotifyMsg;
 				IM::BaseDefine::OfflineFileInfo* pInfo = NotifyMsg.add_offline_file_list();
 				pInfo->set_from_user_id(transfer_task_->to_user_id());
@@ -499,18 +516,16 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
                 pInfo->set_file_name(transfer_task_->file_name());
                 pInfo->set_file_size(transfer_task_->file_size());
                 pInfo->set_file_md5(transfer_task_->file_md5());
-				pInfo->set_status(1);
+				pInfo->set_status(0);//暂时设置为0 表示下载成功
 				
-				log(" INfoNotify  built ok ");
 				CImPdu pdu;
     
 			    pdu.SetPBMsg(&NotifyMsg);
 			    pdu.SetServiceId(SID_OTHER);
-			    pdu.SetCommandId(CID_FILE_Notify_msgserver);
-				 Send_to_msgserver(&pdu);
-				log(" After  Send to msgserver file ok ");
+			    pdu.SetCommandId(CID_FILE_Notify_dbserver);
+				Send_to_msgserver(&pdu);
+				log(" After  Send to msgserver change  file status = 0");
 				// add End 
-				*/
             }
         }
         

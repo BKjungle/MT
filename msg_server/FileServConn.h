@@ -37,7 +37,7 @@ public:
 private:
     void _HandleFileMsgTransRsp(CImPdu* pPdu);
     void _HandleFileServerIPRsp(CImPdu* pPdu);
-	void _HandleFileDownLoadOk(CImPdu* pPdu);
+	void _HandleFileNotify_dbserver(CImPdu* pPdu);
     
 private:
 	bool 		m_bOpen;

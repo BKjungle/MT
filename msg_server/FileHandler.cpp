@@ -370,7 +370,8 @@ void CFileHandler::HandleNotifyAck(CImPdu* pPdu)
 	for(int i = 0;i< infonotify.offline_file_list_size(); i++)
 		{
 			IM::BaseDefine::OfflineFileInfo fileinfo = infonotify.offline_file_list(i);
-			log(" file_name =  %s, size = %d , status = %d  ",fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
+			//log(" file_name =  %s, size = %d , status = %d  ",fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
+			log(" %s file_name =  %s, size = %d , status = %d  ",(CID_FILE_Notify__Ack == pPdu->GetCommandId() ? ("CID_FILE_Notify__Ack"):("CID_FILE_Notify_dbserver")), fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
 		}
 
 	CDBServConn* pDbConn = get_db_serv_conn();

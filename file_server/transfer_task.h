@@ -205,6 +205,9 @@ public:
     
     virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data) { return -1; }
 
+	//add 7.25
+		virtual uint32_t GetNextOffset() const {  return -1; }
+	// add end 
 protected:
     // uint32_t    transfer_mode; // FILE_TYPE_ONLINE realtime, FILE_TYPE_OFFLINE offline / mobile
     std::string task_id_; // uuid_unparse char[37]

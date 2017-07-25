@@ -16,6 +16,8 @@
 #include "IM.Server.pb.h"
 #include "IM.Other.pb.h"
 #include "IM.File.pb.h"
+#include "DBServConn.h"// add 7.25
+
 using namespace IM::BaseDefine;
 static ConnMap_t g_file_server_conn_map;
 
@@ -182,9 +184,9 @@ void CFileServConn::HandlePdu(CImPdu* pPdu)
         case CID_OTHER_FILE_SERVER_IP_RSP:
             _HandleFileServerIPRsp(pPdu);
             break;
-	//	case CID_FILE_Notify_msgserver:  // add  6.16 
-	//		_HandleFileDownLoadOk( pPdu);
-	//		 break;
+		case CID_FILE_Notify_dbserver:  // add  6.16 
+			_HandleFileNotify_dbserver( pPdu);
+			 break;
         default:
             log("unknown cmd id=%d ", pPdu->GetCommandId());
             break;
@@ -299,8 +301,9 @@ void CFileServConn::_HandleFileServerIPRsp(CImPdu* pPdu)
 
 
 // add  6.18   abandon
-void  CFileServConn::_HandleFileDownLoadOk(CImPdu* pPdu)
-{
+void  CFileServConn::_HandleFileNotify_dbserver(CImPdu* pPdu)
+{	
+/*
 IM::BaseDefine::InfoNotify NotifyMsg;
 	CHECK_PB_PARSE_MSG(NotifyMsg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
 	
@@ -346,4 +349,22 @@ IM::BaseDefine::InfoNotify NotifyMsg;
 			log("no exist ");
 		
 		delete pdu ;
+*/
+	
+	IM::BaseDefine::InfoNotify  infonotify;
+	CHECK_PB_PARSE_MSG(infonotify.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	for(int i = 0;i< infonotify.offline_file_list_size(); i++)
+		{
+			IM::BaseDefine::OfflineFileInfo fileinfo = infonotify.offline_file_list(i);
+			log(" %s file_name =  %s, size = %d , status = %d  ",CID_FILE_Notify__Ack == pPdu->GetCommandId() ? "CID_FILE_Notify__Ack":"CID_FILE_Notify_dbserver", fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
+		}
+
+	CDBServConn* pDbConn = get_db_serv_conn();
+    if (pDbConn) {
+       
+        pDbConn->SendPdu(pPdu);// change file_status  =  2(notifed recv ) or 4(notified sender )
+    }
+	
+
 }
