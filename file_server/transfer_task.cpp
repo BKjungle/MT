@@ -603,9 +603,7 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
 			log("transfer file ok remove file ok");
 		else
 			log(" remove  faile ");
-		
 		//add End
-			
             rv = 1;
         } else {
             rv = 0;
