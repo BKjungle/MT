@@ -18,7 +18,8 @@ namespace DB_PROXY {
     void hasOfflineFile(CImPdu* pPdu, uint32_t conn_uuid);
     void addOfflineFile(CImPdu* pPdu, uint32_t conn_uuid);
     void delOfflineFile(CImPdu* pPdu, uint32_t conn_uuid);
-	void NotifyClientAck(CImPdu* pPdu,uint32_t conn_uuid);
+	void notifyClientAck(CImPdu* pPdu,uint32_t conn_uuid);
+	void changeFileStatus(CImPdu* pPdu,uint32_t conn_uuid);
 };
 
 #endif /*defined(__FILEACTION_H__) */

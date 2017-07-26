@@ -106,7 +106,8 @@ void CHandlerMap::Init()
     m_handler_map.insert(make_pair(uint32_t(CID_FILE_HAS_OFFLINE_REQ), DB_PROXY::hasOfflineFile));
     m_handler_map.insert(make_pair(uint32_t(CID_FILE_ADD_OFFLINE_REQ), DB_PROXY::addOfflineFile));
     m_handler_map.insert(make_pair(uint32_t(CID_FILE_DEL_OFFLINE_REQ), DB_PROXY::delOfflineFile));
-	m_handler_map.insert(make_pair(uint32_t(CID_FILE_Notify_dbserver ), DB_PROXY::NotifyClientAck));  // add  6.22 
+	m_handler_map.insert(make_pair(uint32_t(CID_FILE_Notify_dbserver ), DB_PROXY::changeFileStatus));  // add  6.22 
+	m_handler_map.insert(make_pair(uint32_t(CID_FILE_Notify__Ack ), DB_PROXY::notifyClientAck));  // add  7.14 
 
 }
 

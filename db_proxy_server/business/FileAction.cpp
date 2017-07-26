@@ -105,7 +105,7 @@ namespace DB_PROXY {
 	
 
 	// add 6.22
-		void NotifyClientAck(CImPdu* pPdu,uint32_t conn_uuid)
+		void notifyClientAck(CImPdu* pPdu,uint32_t conn_uuid)
 		{
 			IM::BaseDefine::InfoNotify  infonotify;
 			CHECK_PB_PARSE_MSG(infonotify.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
@@ -114,8 +114,23 @@ namespace DB_PROXY {
 					{
 						IM::BaseDefine::OfflineFileInfo fileinfo = infonotify.offline_file_list(i);
 						pModel->ClientAckChangeStatus(fileinfo.task_id(),fileinfo.status());
-						log(" file_name =  %s, size = %d , status = %d  ",fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
+						log("ClientAckChangeStatus file_name = %s, size = %d , status = %d  ",fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
 			
 					}
+		}
+
+	void changeFileStatus(CImPdu* pPdu,uint32_t conn_uuid)
+		{
+			IM::BaseDefine::InfoNotify  infonotify;
+			CHECK_PB_PARSE_MSG(infonotify.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+			CFileModel* pModel = CFileModel::getInstance();
+			for(int i = 0;i< infonotify.offline_file_list_size(); i++)
+					{
+						IM::BaseDefine::OfflineFileInfo fileinfo = infonotify.offline_file_list(i);
+						pModel->ChangeFileStatus(fileinfo.task_id(),fileinfo.status());
+						log(" FileServerChangeFileStatus file_name =%s, size =%d,status = %d",fileinfo.file_name().c_str(),fileinfo.file_size(),fileinfo.status());
+			
+					}
+		
 		}
 };

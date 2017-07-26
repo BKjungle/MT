@@ -198,8 +198,31 @@ void CMsgConn::Close(bool kick_user)
             CImUserManager::GetInstance()->RemoveImUser(pImUser);
         }
     }
-
+ // add 7.26  if user loginout,and this user not exist conn ,his file that download failed should be set 2(has push 已推送)
+	 CImUser *pImUser2 = CImUserManager::GetInstance()->GetImUserById(GetUserId());//在用户单例类中byid找到该用户
+	 if(!pImUser2)
+	 	{
+				InfoNotify NotifyMsg;
+				IM::BaseDefine::OfflineFileInfo* pInfo = NotifyMsg.add_offline_file_list();
+				pInfo->set_from_user_id(GetUserId());
+                pInfo->set_task_id(int2string(GetUserId()));
+                pInfo->set_file_name("0");
+                pInfo->set_file_size(0);
+                pInfo->set_file_md5("0");
+				pInfo->set_status(-1);		// 开始下载， transfering 。变更数据库状态为正在下载
+				
+				CImPdu pdu;
     
+			    pdu.SetPBMsg(&NotifyMsg);
+			    pdu.SetServiceId(SID_OTHER);
+			    pdu.SetCommandId(CID_FILE_Notify_dbserver);
+				CDBServConn* pDbConn = get_db_serv_conn();
+				if (pDbConn) {
+					pDbConn->SendPdu(&pdu);//发送此消息到DB
+				}
+				log(" After  Send to db -1 ok ");
+	 	}
+// add end    
     ReleaseRef();
 }
 

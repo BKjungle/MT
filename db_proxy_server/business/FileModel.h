@@ -24,6 +24,8 @@ public:
     void addOfflineFile(uint32_t fromId, uint32_t toId, string& taskId, string& fileName, uint32_t fileSize,string& filemd5,uint32_t status);
     void delOfflineFile(uint32_t fromId, uint32_t toId, string& taskId);
 	void ClientAckChangeStatus(string  taskId,uint32_t status);	// add 6.21
+	void ChangeFileStatus(string taskId,uint32_t status); 		// add 7.14	
+
     
 private:
     CFileModel();

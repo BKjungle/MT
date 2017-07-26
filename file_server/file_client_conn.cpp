@@ -507,25 +507,6 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
             if (rv == 1) {
                 _StatesNotify(CLIENT_FILE_DONE,FILE_DOWNLOAD, task_id, transfer_task_->from_user_id(), this);
 				//--add 7.14 . for   notify to msgserver change mysql file_status  
-				log(" log  StatesNotify ok to  recver ");
-				// build pPdu 
-				InfoNotify NotifyMsg;
-				IM::BaseDefine::OfflineFileInfo* pInfo = NotifyMsg.add_offline_file_list();
-				pInfo->set_from_user_id(transfer_task_->to_user_id());
-                pInfo->set_task_id(task_id);
-                pInfo->set_file_name(transfer_task_->file_name());
-                pInfo->set_file_size(transfer_task_->file_size());
-                pInfo->set_file_md5(transfer_task_->file_md5());
-				pInfo->set_status(0);//暂时设置为0 表示下载成功
-				
-				CImPdu pdu;
-    
-			    pdu.SetPBMsg(&NotifyMsg);
-			    pdu.SetServiceId(SID_OTHER);
-			    pdu.SetCommandId(CID_FILE_Notify_dbserver);
-				Send_to_msgserver(&pdu);
-				log(" After  Send to msgserver change  file status = 0");
-				// add End 
             }
         }
         

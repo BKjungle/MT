@@ -146,13 +146,9 @@ void CFileModel::delOfflineFile(uint32_t fromId, uint32_t toId, string& taskId)
 	   else
 	   	 strSql =  "update IMTransmitFile  set status=2 where taskId='" + taskId + "'" ;
         if(pDBConn->ExecuteUpdate(strSql.c_str()))
-        {
             log("update offline file success taskid = %s ", taskId.c_str());
-        }
         else
-        {
             log("update offline file failed.taskid taskid = %s ", taskId.c_str());
-        }
         pDBManager->RelDBConn(pDBConn);
     }
     else
@@ -160,4 +156,33 @@ void CFileModel::delOfflineFile(uint32_t fromId, uint32_t toId, string& taskId)
         log("no db connection for teamtalk_master");
     }
 	
+}
+
+// add 7.14
+
+void CFileModel::ChangeFileStatus(string taskId,uint32_t status)
+{
+	CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+	string strSql ;
+	if (pDBConn)
+    {
+		if(-1 ==status )
+		{
+			log(" user loginout , downloading file set 2 ");
+			strSql = "update IMTransmitFile set status=2 where toId="+ taskId +" and status = 5";
+		}else 
+         strSql =  "update IMTransmitFile  set status="+ int2string(status) + " where taskId='" + taskId + "'" ;
+	   
+        if(pDBConn->ExecuteUpdate(strSql.c_str()))
+            log("update offline file %d status success taskid = %s ",status, taskId.c_str());
+        else
+            log("update offline file failed.taskid = %s",taskId.c_str());
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_master");
+    }
+
 }
