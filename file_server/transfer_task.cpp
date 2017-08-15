@@ -596,14 +596,14 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
             fclose(fp_);
             fp_ = NULL;
 		//add by MingQ
-
+/*
 		char save_path[BUFSIZ];
         snprintf(save_path, BUFSIZ, "%s/%s/%s", GetCurrentOfflinePath(), task_id_.substr(0, 2).c_str() , task_id_.c_str());
 		if(remove(save_path) == 0)
 			log("transfer file ok remove file ok");
 		else
 			log(" remove  faile ");
-		//add End
+*/		//add End
             rv = 1;
         } else {
             rv = 0;
