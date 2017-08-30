@@ -305,11 +305,12 @@ const int GroupModifyType_ARRAYSIZE = GroupModifyType_MAX + 1;
 
 enum TransferFileType {
   FILE_TYPE_ONLINE = 1,
-  FILE_TYPE_OFFLINE = 2
+  FILE_TYPE_OFFLINE = 2,
+  FILE_TYPE_OFFLINE_MOBILE = 3
 };
 bool TransferFileType_IsValid(int value);
 const TransferFileType TransferFileType_MIN = FILE_TYPE_ONLINE;
-const TransferFileType TransferFileType_MAX = FILE_TYPE_OFFLINE;
+const TransferFileType TransferFileType_MAX = FILE_TYPE_OFFLINE_MOBILE;
 const int TransferFileType_ARRAYSIZE = TransferFileType_MAX + 1;
 
 enum TransferType {
@@ -336,11 +337,12 @@ enum ClientFileRole {
   CLIENT_REALTIME_SENDER = 1,
   CLIENT_REALTIME_RECVER = 2,
   CLIENT_OFFLINE_UPLOAD = 3,
-  CLIENT_OFFLINE_DOWNLOAD = 4
+  CLIENT_OFFLINE_DOWNLOAD = 4,
+  CLIENT_OFFLINE_DOWNLOAD_MOBILE = 5
 };
 bool ClientFileRole_IsValid(int value);
 const ClientFileRole ClientFileRole_MIN = CLIENT_REALTIME_SENDER;
-const ClientFileRole ClientFileRole_MAX = CLIENT_OFFLINE_DOWNLOAD;
+const ClientFileRole ClientFileRole_MAX = CLIENT_OFFLINE_DOWNLOAD_MOBILE;
 const int ClientFileRole_ARRAYSIZE = ClientFileRole_MAX + 1;
 
 enum FileServerError {

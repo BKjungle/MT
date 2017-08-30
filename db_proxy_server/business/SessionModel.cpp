@@ -267,12 +267,16 @@ bool Judgment(uint32_t nUserId,uint32_t nPeerId, IM::BaseDefine::SessionType nSe
 			}
 		
 			CResultSet* pResultSetTmp = pDBConn->ExecuteQuery(strSqlTmp.c_str());
-			pResultSetTmp->Next();
-			if(3 == pResultSetTmp->GetInt("status") || 1 == pResultSetTmp->GetInt("status"))// 被删除或不在群里
-			{
-			    ret = false;
+			if(pResultSetTmp->Next()){
+				if(3 == pResultSetTmp->GetInt("status") || 1 == pResultSetTmp->GetInt("status"))// 被删除或不在群里
+				{
+			    	ret = false;
+				}
 			}
-		delete pResultSetTmp;
+		if(pResultSetTmp != NULL)
+		{	delete pResultSetTmp;
+		log(" after delete resultset");
+		}
 		pDBManager->RelDBConn(pDBConn);
     }
 	

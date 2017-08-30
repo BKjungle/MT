@@ -78,11 +78,12 @@ void FileClientConn::Close() {
         it++;
         
         FileClientConn* conn = (FileClientConn*)it_old->second;
-		if(conn != this && conn->Get_transfer_task_() == transfer_task_)
+		if(conn != this && conn->Get_transfer_task_() == transfer_task_  && conn->Getmodetag() !=CLIENT_OFFLINE_DOWNLOAD_MOBILE)
 			{
-			conn->Set_transfer_task_(NULL);
+			conn->Set_transfer_task_(NULL);  //本身关闭同时，关闭其他端任务 地址
 			}
        	}    
+
     if (transfer_task_) {
 
 				
@@ -94,17 +95,18 @@ void FileClientConn::Close() {
 			log("1111111111");
 	            }
 	    	
-	        transfer_task_->SetConnByUserID(user_id_, NULL);
-	        TransferTaskManager::GetInstance()->DeleteTransferTaskByConnClose(transfer_task_->task_id());
+	        transfer_task_->SetConnByUserID(user_id_, NULL,modetag);
+			if(transfer_task_->GetToConn() == NULL &&  transfer_task_->GetToConnMobile() == NULL) {
+				log("delete before");
+	        	TransferTaskManager::GetInstance()->DeleteTransferTaskByConnClose(transfer_task_->task_id());
+				log(" delete ok");
+			}
 	        transfer_task_ = NULL;
     }
     auth_ = false;
-			log("1111111111");
 
     if (m_handle != NETLIB_INVALID_HANDLE) {
-			log("1111111111");
         netlib_close(m_handle);
-			log("1111111111");
         g_file_client_conn_map.erase(m_handle);
 			log("1111111111");
     }
@@ -244,7 +246,7 @@ void FileClientConn::_HandleClientFileLoginReq(CImPdu* pdu) {
         
         if (transfer_task == NULL) {
 			log(" transfer_task  is   NULL ---------------");
-            if (mode == CLIENT_OFFLINE_DOWNLOAD) {
+            if (mode == CLIENT_OFFLINE_DOWNLOAD || mode == CLIENT_OFFLINE_DOWNLOAD_MOBILE) {
                 // 文件不存在，检查是否是离线下载，有可能是文件服务器重启
                 // 尝试从磁盘加载
                 transfer_task = TransferTaskManager::GetInstance()->NewTransferTask(task_id, user_id);
@@ -262,17 +264,20 @@ void FileClientConn::_HandleClientFileLoginReq(CImPdu* pdu) {
         // 状态转换
         rv = transfer_task->ChangePullState(user_id, mode);
         if (!rv) {
-            // log();
+			log(" changePullState faile");
             break;
-            //
         }
         
         // Ok
+         if(mode == CLIENT_OFFLINE_DOWNLOAD_MOBILE )
+			modetag = CLIENT_OFFLINE_DOWNLOAD_MOBILE;
         auth_ = true;
         transfer_task_ = transfer_task;
         user_id_ = user_id;
         // 设置conn
-        transfer_task->SetConnByUserID(user_id, this);
+        transfer_task->SetConnByUserID(user_id, this, mode);
+		if(transfer_task->GetToConn() == NULL)
+			log(" toconn == NULL SET FAILED");
         rv = true;
         
     } while (0);
@@ -416,7 +421,7 @@ void FileClientConn::_HandleClientFileStates(CImPdu* pdu) {
 // if transfer data
 
 void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
-    if (!auth_ || !transfer_task_) {
+    if (!auth_ ) {
         log("Recv a client_file_state, but auth is false");
 	//	Close(); // add 6.29 11:34
         return;
@@ -444,6 +449,27 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
     // BaseTransferTask* transfer_task = NULL;
     int rv = -1;
     
+		// 检查 transfer_task_
+        if(NULL == transfer_task_)
+		{
+			    log("1111111111");	
+                transfer_task_ = TransferTaskManager::GetInstance()->NewTransferTask(task_id, user_id);
+
+			    log("1111111111");	
+                // 需要再次判断是否加载成功
+                if (transfer_task_ == NULL) {
+                    log("Find task id failed, user_id=%u, taks_id=%s, mode=%d", user_id, task_id.c_str(), mode);
+                   
+                }
+				
+			
+        int ret  = transfer_task_->ChangePullState(user_id, CLIENT_OFFLINE_DOWNLOAD);
+        if (!ret) {
+			log(" changePullState faile");
+        }
+           
+		}
+
     do {
         // 检查user_id
         if (user_id != user_id_) {
@@ -451,6 +477,7 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
             break;
         }
 
+		
         // 检查task_id
         if (transfer_task_->task_id() != task_id) {
             log("Received task_id valid, recv_task_id = %s, this_task_id = %s", task_id.c_str(), transfer_task_->task_id().c_str());
@@ -464,8 +491,8 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
             log("user_id equal transfer_task.to_user_id, but user_id=%d, transfer_task.to_user_id=%d", user_id, transfer_task_->to_user_id());
             break;
         }
-        
-        rv =  transfer_task_->DoPullFileRequest(user_id, offset, datasize, pull_data_rsp.mutable_file_data());
+    	log(" in  467 ");    
+        rv =  transfer_task_->DoPullFileRequest(user_id, offset, datasize, pull_data_rsp.mutable_file_data(),mode);
        // add 7.14 
 		if( 32768 == transfer_task_->GetNextOffset() ) // 32768 == SEGMENT_SIZE
 			{

@@ -12,6 +12,9 @@
 #include "base/util.h"
 #include "FileMd5.h"
 #include "file_server/offline_file_util.h"
+#include "base/pb/protocol/IM.BaseDefine.pb.h"
+
+using namespace IM::BaseDefine;
 
 class CImConn;
 
@@ -150,7 +153,9 @@ public:
      CImConn* GetToConn() {
         return to_conn_;
      }
-
+ 	  CImConn* GetToConnMobile(){ // add 8.28
+	 	return  to_conn_mobile;  
+	 }
      CImConn* GetConnByUserID(uint32_t user_id) const {
         if (from_user_id_ == user_id) {
             return from_conn_;
@@ -161,8 +166,11 @@ public:
         }
      }
     
-     void SetConnByUserID(uint32_t user_id, CImConn* conn) {
-        if (from_user_id_ == user_id) {
+     void SetConnByUserID(uint32_t user_id, CImConn* conn ,unsigned int mode ) {
+		if(mode == CLIENT_OFFLINE_DOWNLOAD_MOBILE && to_user_id_ == user_id){	// add 8.18 
+				
+	 			to_conn_mobile = conn;
+	 	}else if (from_user_id_ == user_id) {
             from_conn_ = conn;
         } else if (to_user_id_ == user_id) {
             to_conn_ = conn;
@@ -203,7 +211,7 @@ public:
     
     virtual int DoRecvData(uint32_t user_id, uint32_t offset, const char* data, uint32_t data_size) { return -1; }
     
-    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data) { return -1; }
+    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset,uint32_t data_size, std::string* data,uint32_t mode = -1) { return -1; } // add 8.22 "uint32_t mode"
 
 	//add 7.25
 		virtual uint32_t GetNextOffset() const {  return -1; }
@@ -219,10 +227,10 @@ protected:
     time_t      create_time_;
 
     int         state_;         // 传输状态
-
+	int 		state_mobile;
     CImConn*    from_conn_;
     CImConn*    to_conn_;
-    
+   	CImConn*	to_conn_mobile;		//add 8.18 
     // uint64_t    last_update_time_;
 };
 
@@ -246,7 +254,7 @@ public:
     virtual bool CheckByUserIDAndFileRole(uint32_t user_id, int file_role) const;
     
     virtual int DoRecvData(uint32_t user_id, uint32_t offset, const char* data, uint32_t data_size);
-    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data);
+    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data,uint32_t mode = -1); // add 8.22 " uin32_t mode "
     
     void SetSeqNum(uint32_t seq_num) {
         mac_seq_num_ = seq_num;
@@ -269,9 +277,11 @@ public:
         : BaseTransferTask(task_id, from_user_id, to_user_id, file_name, file_size,file_md5) {
 //        file_header_ = NULL;
         fp_ = NULL;
+		fp_mobile = NULL;
         transfered_idx_ = 0;
-            
+    	transfered_idx_mobile  = 0;        // add 8.23 
         sengment_size_ = SetMaxSegmentSize(file_size);
+		sengment_size_mobile = sengment_size_;
     }
 
     virtual ~OfflineTransferTask() {
@@ -294,14 +304,16 @@ public:
     virtual bool CheckByUserIDAndFileRole(uint32_t user_id, int file_role) const;
     
     virtual int DoRecvData(uint32_t user_id, uint32_t offset, const char* data, uint32_t data_size);
-    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data);
+    virtual int DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data,uint32_t mode = -1); // add " uint32_t mode" 8.22
    
     inline int GetSegmentSize() const {
         return sengment_size_;
     }
     
-    inline int GetNextSegmentBlockSize() {
+    inline int GetNextSegmentBlockSize(uint32_t mode = -1) {
         int block_size = SEGMENT_SIZE;//ƽʱ ???鴫??
+		if(mode == FILE_TYPE_OFFLINE_MOBILE && transfered_idx_mobile+1 == sengment_size_mobile)
+			block_size = file_size_ - transfered_idx_mobile * SEGMENT_SIZE; // add 8.23
         if (transfered_idx_+1 == sengment_size_) {
             block_size = file_size_ - transfered_idx_*SEGMENT_SIZE;//????һ?δ?????С
         }
@@ -330,11 +342,13 @@ private:
     
     // FileHeader* file_header_;
     FILE*       fp_;
-    
+    FILE*	 	fp_mobile;
+ 
     // 已经传输
     int transfered_idx_;
     int sengment_size_;
-    
+   	int transfered_idx_mobile ;        // add 8.23 
+	int sengment_size_mobile; 
     // std::map<uint32_t, upload_package_t*> upload_packages;
 };
 

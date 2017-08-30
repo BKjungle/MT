@@ -103,13 +103,14 @@ BaseTransferTask::BaseTransferTask(const std::string& task_id, uint32_t from_use
       file_name_(file_name),
       file_size_(file_size),
       file_md5_(file_md5),					// add md 5
-      state_(kTransferTaskStateReady) {
+      state_(kTransferTaskStateReady), state_mobile(kTransferTaskStateReady) {
     
     create_time_ = time(NULL);
           
     from_conn_ = NULL;
     to_conn_ = NULL;
-          
+	          
+   	to_conn_mobile = NULL;		//add 8.18 
     // last_update_time_ = get_tick_count();
 }
 
@@ -234,7 +235,7 @@ int OnlineTransferTask::DoRecvData(uint32_t user_id, uint32_t offset, const char
     return rv;
 }
 
-int OnlineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data) {
+int OnlineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data,uint32_t mode) {
     int rv = -1;
     
     // 在线
@@ -344,7 +345,11 @@ bool OfflineTransferTask::ChangePullState(uint32_t user_id, int file_role) {
             if (file_role == CLIENT_OFFLINE_DOWNLOAD) {
                 state_ = kTransferTaskStateWaitingDownload;
 				transfered_idx_ = 0;	                      // add   -------------------------------6.26
-            } else {
+            }else if(file_role == CLIENT_OFFLINE_DOWNLOAD_MOBILE){
+            	
+        		state_mobile = kTransferTaskStateWaitingDownload;
+									// -------------------add 8.17
+			 }else {
                 log("Offline upload: file_role is CLIENT_OFFLINE_DOWNLOAD but file_role = %d", file_role);
                 break;
             }
@@ -369,7 +374,7 @@ bool OfflineTransferTask::CheckByUserIDAndFileRole(uint32_t user_id, int file_ro
         if (CheckFromUserID(user_id)) {
             rv = true;
         }
-    } else if (file_role == CLIENT_OFFLINE_DOWNLOAD) {
+    } else if (file_role == CLIENT_OFFLINE_DOWNLOAD || file_role == CLIENT_OFFLINE_DOWNLOAD_MOBILE) {
         if (CheckToUserID(user_id)) {
             rv = true;
         }
@@ -409,7 +414,7 @@ int OfflineTransferTask::DoRecvData(uint32_t user_id, uint32_t offset, const cha
         
         data_size = GetNextSegmentBlockSize();
         log("Ready recv data, offset=%d, data_size=%d, segment_size=%d", offset, data_size, sengment_size_);
-        
+       	log(" state_ =  %d " , state_); 
         if (state_ == kTransferTaskStateWaitingUpload) {//????һ???ļ?
             if (fp_ == NULL) {
                 fp_ = OpenByWrite(task_id_, to_user_id_);
@@ -492,33 +497,83 @@ int OfflineTransferTask::DoRecvData(uint32_t user_id, uint32_t offset, const cha
     return rv;
 }
 
-int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data) {
+int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, uint32_t data_size, std::string* data,uint32_t mode) {
     int rv = -1;
     
     log("Recv pull file request: user_id=%d, offset=%d, data_size=%d", user_id, offset, data_size);
 
     do {
-        // 1. 首先检查状态，必须为kTransferTaskStateWaitingDownload或kTransferTaskStateDownloading
-        if (state_ != kTransferTaskStateWaitingDownload && state_ != kTransferTaskStateDownloading) {
-            log("state=%d error, need kTransferTaskStateWaitingDownload or kTransferTaskStateDownloading", state_);
-            break;
+        if(mode == FILE_TYPE_OFFLINE_MOBILE)
+			{
+					log(" mode == ","FILE_TYPE_OFFLINE_MOBILE");
+				 if (state_mobile != kTransferTaskStateWaitingDownload && state_mobile != kTransferTaskStateDownloading) {
+           			 log("state=%d error, need kTransferTaskStateWaitingDownload or kTransferTaskStateDownloading", state_mobile);
+           				 break;
+        			}
+			} else if (state_ != kTransferTaskStateWaitingDownload && state_ != kTransferTaskStateDownloading) {
+           				log("state=%d error, need kTransferTaskStateWaitingDownload or kTransferTaskStateDownloading", state_);
+           				break;
         }
         
         // 2. 处理kTransferTaskStateWaitingDownload
-        if(state_ == kTransferTaskStateWaitingDownload) {
+      	// add 8.23 
+		if(mode == FILE_TYPE_OFFLINE_MOBILE)
+			{
+					if(state_mobile == kTransferTaskStateWaitingDownload) {
+			            if (transfered_idx_mobile != 0)
+			                transfered_idx_mobile = 0;
+		           log(" 111111111"); 
+			            if (fp_mobile!=NULL) {
+			                fclose(fp_mobile);
+			                fp_mobile = NULL;
+			            }
+					
+		           log(" 22222222"); 
+
+			            fp_mobile = OpenByRead(task_id_, user_id);
+				            if (fp_mobile == NULL) {
+								log(" fp_mobile == NULL");
+				                break;
+				           		 }
+	
+		           log("33333333"); 
+			            OfflineFileHeader file_header_mobile;
+			            size_t size = fread(&file_header_mobile, 1, sizeof(file_header_mobile), fp_mobile);
+			            if (sizeof(file_header_mobile) != size) {
+			                
+			                log("read file head failed. in mobile");
+			                fclose(fp_mobile); // error to get header
+			                fp_mobile = NULL;
+			                break;
+			                
+			            }
+						 
+		           log(" 4444444"); 
+		            	state_mobile = kTransferTaskStateDownloading;
+		        	} else {
+			            if (fp_mobile == NULL) {
+			                log(" fp_mobile == NULL ");
+			                break;
+			            }
+		        	}
+			}  				// add end 
+			else if(state_ == kTransferTaskStateWaitingDownload) {
             if (transfered_idx_ != 0)
                 transfered_idx_ = 0;
             
+		           log(" 2111111111"); 
             if (fp_!=NULL) {
                 fclose(fp_);
                 fp_ = NULL;
             }
-
+				
+		           log(" 2222222222222"); 
             fp_ = OpenByRead(task_id_, user_id);//??֯·?????????ļ?
             if (fp_ == NULL) {
                 break;
             }
             
+		           log("2333333333"); 
             //if (file_header_ == NULL) {
             //    file_header_ = new FileHeader();
             //}
@@ -545,40 +600,37 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
         }
         
         // 检查offset是否有效
-        if (offset != transfered_idx_*SEGMENT_SIZE) {
-            log("Recv offset error, offser=%d, transfered_offset=%d", offset, transfered_idx_*SEGMENT_SIZE);
-            break;
-        }
+         if(mode == FILE_TYPE_OFFLINE_MOBILE)
+        	{
+        	 if (offset != transfered_idx_mobile*SEGMENT_SIZE) {
+		            log("Recv offset error, offser=%d, transfered_offset_mobile=%d", offset, transfered_idx_mobile*SEGMENT_SIZE);
+		            break;
+       			 }
+        	}
+        else{
+				if(offset != transfered_idx_*SEGMENT_SIZE) {
+			            log("Recv offset error, offser=%d, transfered_offset=%d", offset, transfered_idx_*SEGMENT_SIZE);
+			            break;
+       				 }
+        	}
+		 
+        data_size = GetNextSegmentBlockSize(mode );
         
-        data_size = GetNextSegmentBlockSize();
-        
-        log("Ready send data, offset=%d, data_size=%d", offset, data_size);
-        //if (data_size != GetNextSegmentBlockSize()) {
-        //    log("Recv data_size error, data_size=%d, transfered_data_size=%d", data_size, GetNextSegmentBlockSize());
-        //    break;
-        //}
+        log("Ready send data to %s , offset=%d, data_size=%d",(mode == 2)?"client":"mobile", offset, data_size);
 
-        
-        // the header won't be sent to recver, because the msg svr had already notified it.
-        // if the recver needs to check it, it could be helpful
-        // or sometime later, the recver needs it in some way.
-        
-            
-        // read data and send based on offset and datasize.
         char* tmpbuf = new char[data_size];
         if (NULL == tmpbuf) {
-            // alloc mem failed
             log("alloc mem failed.");
-            // SendPdu(&pdu);
-            //t->unlock(__LINE__);
-            // return;
             break;
         }
         memset(tmpbuf, 0, data_size);
-        
-        size_t size = fread(tmpbuf, 1, data_size, fp_);
+		size_t size;
+        if(mode == FILE_TYPE_OFFLINE_MOBILE)   	// 判断
+			size = fread(tmpbuf, 1, data_size, fp_mobile);
+		else 
+        	size = fread(tmpbuf, 1, data_size, fp_);
         if (size != data_size) {
-            log("Read size error, data_size=%d, but read_size=%d", data_size, size);
+            log("Read %s  size error, data_size=%d, but read_size=%d",mode == 2?"client":"mobile", data_size, size);
             delete [] tmpbuf;
             break;
             //
@@ -587,14 +639,34 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
         data->append(tmpbuf, data_size);
         delete [] tmpbuf;
 
-        transfered_idx_++;
-        
+       if(FILE_TYPE_OFFLINE_MOBILE == mode) //  判断 
+        		transfered_idx_mobile++;
+		else 
+		 		transfered_idx_++;
+ 
         SetLastUpdateTime();
-        if (transfered_idx_ == sengment_size_) {
-            log("pull req end.");
+			log(" mode = %d, transfered_idx_mobile = %d ", mode,sengment_size_mobile);
+        if(FILE_TYPE_OFFLINE_MOBILE == mode && transfered_idx_mobile == sengment_size_mobile)   // 判断
+		{
+			log(" mobile pull req end.");
+            state_mobile = kTransferTaskStateDownloadEnd;
+            fclose(fp_mobile);
+            fp_mobile = NULL;
+			transfered_idx_mobile = 0;			
+            rv = 1;
+
+		}
+		else if (transfered_idx_ == sengment_size_) {
+            log("pc pull req end.");
             state_ = kTransferTaskStateDownloadEnd;
             fclose(fp_);
             fp_ = NULL;
+			transfered_idx_ = 0;
+            rv = 1;
+        } else {
+            rv = 0;
+        }
+
 		//add by MingQ
 /*
 		char save_path[BUFSIZ];
@@ -604,11 +676,6 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
 		else
 			log(" remove  faile ");
 */		//add End
-            rv = 1;
-        } else {
-            rv = 0;
-        }
-
 /*      
         msg2.set_file_data(tmpbuf, size);
         msg2.set_result_code(0);

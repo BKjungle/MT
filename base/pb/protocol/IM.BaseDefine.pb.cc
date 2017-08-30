@@ -370,6 +370,7 @@ bool TransferFileType_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -404,6 +405,7 @@ bool ClientFileRole_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;

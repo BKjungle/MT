@@ -88,6 +88,7 @@ bool TransferTaskManager::DeleteTransferTaskByConnClose(const std::string& task_
     
     TransferTaskMap::iterator it = transfer_tasks_.find(task_id);
     if (it!=transfer_tasks_.end()) {
+			log("has  find it ");
         BaseTransferTask* transfer_task = it->second;
         if (transfer_task->GetTransMode() == FILE_TYPE_ONLINE) {
             if (transfer_task->GetFromConn() == NULL && transfer_task->GetToConn() == NULL) {
@@ -101,6 +102,7 @@ bool TransferTaskManager::DeleteTransferTaskByConnClose(const std::string& task_
                 delete transfer_task;
                 transfer_tasks_.erase(it);
                 rv = true;
+				log(" has delete transfer_task ok ");
             }
         }
         

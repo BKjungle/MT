@@ -20,7 +20,8 @@ public:
     FileClientConn()
         : auth_(false),
           user_id_(0),
-          transfer_task_(NULL) {
+          transfer_task_(NULL),
+		  modetag(0) {
     }
     
     virtual ~FileClientConn() { }
@@ -41,6 +42,10 @@ public:
         transfer_task_ = NULL;
     }
     
+	 uint32_t	Getmodetag()
+	{
+		return  modetag;	
+	}
 	// add 6.29
 	 BaseTransferTask* Get_transfer_task_(){return transfer_task_;} 
     void Set_transfer_task_(BaseTransferTask* Transfer_task_ ){transfer_task_ = Transfer_task_ ;} 
@@ -64,7 +69,7 @@ private:
     /// yunan add end
     
     bool		auth_;
-    
+    uint32_t	modetag; 
     uint32_t	user_id_;
     // 当前设计每个连接对应一次任务，故可预先缓存
     BaseTransferTask* transfer_task_;
