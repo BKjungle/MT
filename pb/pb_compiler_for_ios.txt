@@ -1,0 +1,3 @@
+github url:
+https://github.com/alexeyxo/protobuf-objc   // this is valid 
+https://github.com/mingchen/protobuf-ios 
