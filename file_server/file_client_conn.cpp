@@ -503,7 +503,7 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
                 pInfo->set_file_name(transfer_task_->file_name());
                 pInfo->set_file_size(transfer_task_->file_size());
                 pInfo->set_file_md5(transfer_task_->file_md5());
-				pInfo->set_status(5);				// 开始下载， transfering 。变更数据库状态为正在下载
+				pInfo->set_status(3);				// 开始下载， transfering 。变更数据库状态为正在下载
 				
 				CImPdu pdu;
     
@@ -533,7 +533,6 @@ void FileClientConn::_HandleClientFilePullFileReq(CImPdu *pdu) {
             SendMessageLite(this, SID_FILE, CID_FILE_PULL_DATA_RSP, pdu->GetSeqNum(), &pull_data_rsp);
             if (rv == 1) {
                 _StatesNotify(CLIENT_FILE_DONE,FILE_DOWNLOAD, task_id, transfer_task_->from_user_id(), this);
-				//--add 7.14 . for   notify to msgserver change mysql file_status  
             }
         }
         

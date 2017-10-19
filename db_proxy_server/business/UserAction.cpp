@@ -86,7 +86,8 @@ msgResp.set_user_id(from_user_id);
             uint32_t nReqId = msg.user_id();
             uint32_t nLastTime = msg.latest_update_time();
             uint32_t nLastUpdate = CSyncCenter::getInstance()->getLastUpdate();
-          
+            
+			log("--------------------- nLastTime =  %d , nLastUpdate =  %d ", nLastTime ,nLastUpdate);
             list<IM::BaseDefine::UserInfo> lsUsers;
             if( nLastUpdate > nLastTime)
             {

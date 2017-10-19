@@ -170,7 +170,7 @@ void CFileModel::ChangeFileStatus(string taskId,uint32_t status)
 		if(-1 ==status )
 		{
 			log(" user loginout , downloading file set 2 ");
-			strSql = "update IMTransmitFile set status=2 where toId="+ taskId +" and status = 5";
+			strSql = "update IMTransmitFile set status=2 where toId="+ taskId +" and status = 3";
 		}else 
          strSql =  "update IMTransmitFile  set status="+ int2string(status) + " where taskId='" + taskId + "'" ;
 	   

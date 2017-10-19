@@ -1,1 +1,0 @@
-/root/TeamTalk/server/src/slog/CMakeFiles/slog.dir

@@ -2,7 +2,7 @@
 
 
 
-for x in base file_server http_msg_server  push_server login_server db_proxy_server msg_server route_server   clientRobot_EVP  msfs 
+for x in base file_server http_msg_server  push_server login_server db_proxy_server msg_server route_server   clientRobot_EVP  msfs delfile 
 do
     cd $x
 

@@ -24,6 +24,8 @@ namespace DB_PROXY{
             
             uint32_t nUserId = msg.user_id();
             uint32_t nLastUpdate = msg.latest_update_time();
+				
+			log(" ================nLastUpdate = %d ",nLastUpdate);  
             list<uint32_t> lsChangedIds;
             CDepartModel::getInstance()->getChgedDeptId(nLastUpdate, lsChangedIds);
             list<IM::BaseDefine::DepartInfo> lsDeparts;

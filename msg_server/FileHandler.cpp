@@ -34,21 +34,15 @@ void CFileHandler::HandleClientFileRequest(CMsgConn* pMsgConn, CImPdu* pPdu)
 	log("tests -----------------------------");
     CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
     
-	log("test **********************************");
+	
     uint32_t from_id = pMsgConn->GetUserId();
-	log("test 0000000000000000000000");
+
     uint32_t to_id = msg.to_user_id();
-	log("test 0000000000000000000001");
     string file_name = msg.file_name();
-	log("test 0000000000000000000002");
     uint32_t file_size = msg.file_size();
-	log("test 0000000000000000000003");
     uint32_t trans_mode = msg.trans_mode();
-	log("tset 0000000000000000000004");
     string file_md5 = msg.file_md5();			// add Md5 
-	log("111111111111111111111111111111111");
     log("HandleClientFileRequest, %u->%u, fileName: %s, trans_mode: %u, md5 = %s", from_id, to_id, file_name.c_str(), trans_mode,file_md5.c_str());
-    log("222222222222222222222222222222222222");
     
     CDbAttachData attach(ATTACH_TYPE_HANDLE, pMsgConn->GetHandle());
     CFileServConn* pFileConn = get_random_file_serv_conn();
@@ -59,9 +53,7 @@ void CFileHandler::HandleClientFileRequest(CMsgConn* pMsgConn, CImPdu* pPdu)
         msg2.set_to_user_id(to_id);
         msg2.set_file_name(file_name);
         msg2.set_file_size(file_size);
-		log("55555555555555555555");
 		msg2.set_file_md5(file_md5);            //add md5 
-		log("66666666666666666666");
         msg2.set_trans_mode((IM::BaseDefine::TransferFileType)trans_mode);
         msg2.set_attach_data(attach.GetBuffer(), attach.GetLength());
         CImPdu pdu;
@@ -69,11 +61,9 @@ void CFileHandler::HandleClientFileRequest(CMsgConn* pMsgConn, CImPdu* pPdu)
         pdu.SetServiceId(SID_OTHER);
         pdu.SetCommandId(CID_OTHER_FILE_TRANSFER_REQ);
         pdu.SetSeqNum(pPdu->GetSeqNum());
-       log("7777777777777777777"); 
         if (IM::BaseDefine::FILE_TYPE_OFFLINE == trans_mode)
         {
             pFileConn->SendPdu(&pdu);
-		log("8888888888888888888");
         }
         else //IM::BaseDefine::FILE_TYPE_ONLINE
         {
@@ -245,6 +235,7 @@ void CFileHandler::HandleClientFileAddOfflineReq(CMsgConn* pMsgConn, CImPdu* pPd
 
 void CFileHandler::HandleClientFileDelOfflineReq(CMsgConn* pMsgConn, CImPdu* pPdu)
 {
+	int flag = 0;
     IM::File::IMFileDelOfflineReq msg;
     CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
 
@@ -257,28 +248,44 @@ void CFileHandler::HandleClientFileDelOfflineReq(CMsgConn* pMsgConn, CImPdu* pPd
     
     CDBServConn* pDbConn = get_db_serv_conn();
     if (pDbConn) {
-        msg.set_from_user_id(from_id);
+       
         pPdu->SetPBMsg(&msg);
-        pDbConn->SendPdu(pPdu);
+       // pDbConn->SendPdu(pPdu);
     }
-	//// ---------------add 6.19  notigy fromuser peer download ok 
-/*
+	// ---------------------add 10.11
+
+				InfoNotify NotifyMsg;
+				IM::BaseDefine::OfflineFileInfo* pInfo = NotifyMsg.add_offline_file_list();
+				pInfo->set_from_user_id(from_id);
+                pInfo->set_task_id(task_id);
+                pInfo->set_file_name(file_name);
+                pInfo->set_file_size(file_size);
+                pInfo->set_file_md5(" ");
+				pInfo->set_status(4);				// 下载done  。mysql this  file status change into 4 .  
+	
+	// ---------------------add end 10.11 
+	
+	// ---------------add 6.19  notigy fromuser peer download ok 
 	CFileServConn* pFileConn = get_random_file_serv_conn();//  file conn
-	IM::File::IMFileHasOfflineRsp	downfile ;
+	CImUser* fromusr  = CImUserManager::GetInstance()->GetImUserById(from_id);
+	if( NULL != fromusr)
+		{
+			IM::File::IMFileHasOfflineRsp	downfile ;
+				
+			downfile.set_user_id(to_id);
+			IM::BaseDefine::OfflineFileInfo* temp =  downfile.add_offline_file_list();
+			temp->set_from_user_id(from_id);
+			temp->set_task_id(task_id);
+			temp->set_file_name(file_name);
+			temp->set_file_size(file_size);
+			temp->set_file_md5("1");
+			temp->set_status(FILE_NEED_DISPLAY);  //  0->peer download ok . 1->waiting download 
 		
-		downfile.set_user_id(to_id);
-		IM::BaseDefine::OfflineFileInfo* temp =  downfile.add_offline_file_list();
-		temp->set_from_user_id(from_id);
-		temp->set_task_id(task_id);
-		temp->set_file_name(file_name);
-		temp->set_file_size(1);
-		temp->set_file_md5("1");
-		temp->set_status(FILE_NEED_DISPLAY); //  0->peer download ok . 1->waiting download 
-		
-		const list<IM::BaseDefine::IpAddr> * iptemp  = NULL;
-		
-		//	iptemp = this->GetFileServerIPList();
-		iptemp = pFileConn->GetFileServerIPList();
+			
+			const list<IM::BaseDefine::IpAddr> * iptemp  = NULL;
+			
+			//iptemp = this->GetFileServerIPList();
+			iptemp = pFileConn->GetFileServerIPList();
 			for(list<IM::BaseDefine::IpAddr>::const_iterator it = iptemp->begin(); it != iptemp->end();it++)
 				{
 					IM::BaseDefine::IpAddr ip_addr_tmp = *it;
@@ -291,16 +298,28 @@ void CFileHandler::HandleClientFileDelOfflineReq(CMsgConn* pMsgConn, CImPdu* pPd
 			pdu->SetPBMsg(&downfile);
 			pdu->SetServiceId(IM::BaseDefine::SID_FILE);
 			pdu->SetCommandId(IM::BaseDefine::CID_FILE_HAS_OFFLINE_RES);
-	
-			CImUser* fromusr  = CImUserManager::GetInstance()->GetImUserById(from_id);
-			if (fromusr) {
-			//	fromusr->BroadcastPdu( pdu);// send to sender 
+		
+		
+			fromusr->BroadcastPdu( pdu);// send to sender 
+			flag = 1;
+			delete pdu;
 			}
 			else
 				log("no exist ");
 			
-			// add end 
-			*/
+		if(1 == flag) // from user is online ，set file status = 5 (download inform is push )
+			pInfo->set_status(5);
+		
+		CImPdu pdu;
+
+		    pdu.SetPBMsg(&NotifyMsg);
+		    pdu.SetServiceId(SID_OTHER);
+		    pdu.SetCommandId(CID_FILE_Notify_dbserver);
+			pDbConn->SendPdu(&pdu);
+		log(" After  Send to msgserver 4 or 5 ok ");
+
+	
+	//-------------------------------------
 }
 
 void CFileHandler::HandleFileHasOfflineRes(CImPdu* pPdu)

@@ -20,10 +20,11 @@ bool pDBInit(const char* db_host,unsigned int db_port,const char* db_dbname,
 				const char* db_username,const char *db_password );
 void timer(int sig)  
 {  
+		log(" in timer ");
         if(SIGALRM == sig)  
         {  
             log("timer\n");  
-            alarm(2);       //we continue set the timer  
+            alarm(3);       //we continue set the timer  
             if(1 == flag)
             	{
             		log("del server is busy ");
@@ -84,14 +85,18 @@ void timer(int sig)
 			log(" Quit dir failed ");
 			return ;
 		}
+		
   		flag = 0;
+		log("flag = 0 ");
         return ;  
 }  
   
 int main()  
 {  
+		log(" exe is start----------------  ");
         signal(SIGALRM, timer); //relate the signal and function  
         
+		log(" exe is start---------------1  ");
         //mysql 
         CConfigFileReader config_file("del_fileserver.conf");
  
@@ -101,12 +106,14 @@ int main()
 		char* db_username = config_file.GetConfigName("username");
 		char* db_password = config_file.GetConfigName("password");
 
+		log(" exe is start---------------2 ");
 
 		if (!db_host || !str_db_port || !db_dbname || !db_username || !db_password ) {
 			log("not configure db info  instance: %s", db_dbname);
 			return 2;
 		}
   		
+		log(" exe is start---------------3  ");
   		unsigned int db_port = atoi(str_db_port);
   		if (!pDBInit(db_host , db_port ,db_dbname ,db_username ,db_password)) {//链接指定mysql数据库
 			log("init db instance failed: %s");
@@ -114,11 +121,18 @@ int main()
 		}
   		
   		
+		log(" exe is start---------------4  ");
   		
-        alarm(2);       //trigger the timer  
+        alarm(3);       //trigger the timer  
+		log(" after alarm ");
+		while(1)
+{
+ 		sleep(10);
+}
+	 
+//        getchar();  
   
-        getchar();  
-  
+		log("return ");
         return 0;  
 }  
 
@@ -126,22 +140,28 @@ int main()
 bool pDBInit(const char* db_host,unsigned int db_port,const char* db_dbname,
 				const char* db_username,const char *db_password )
 {
+	
+		log(" pDBInit  start---------------1  ");
 	m_mysql = mysql_init(NULL);
 	if (!m_mysql) {
 		log("mysql_init failed");
 		return false;
 	}
 
+		log(" pDBInit  start---------------2  ");
 	my_bool reconnect = true;
 	mysql_options(m_mysql, MYSQL_OPT_RECONNECT, &reconnect);
+		log(" pDBInit  start---------------3  ");
 	mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
 
+		log(" pDBInit  start--------------4 ");
 	if (!mysql_real_connect(m_mysql,db_host, db_username,db_password,db_dbname, db_port, NULL, 0)) {
 		log("mysql_real_connect failed: %s", mysql_error(m_mysql));
 		return false;
 	}
 
 
+		log(" pDBInit  start---------------5  ");
 	
 	return true;
 }
