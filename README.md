@@ -1,4 +1,7 @@
+// checkout dev
+
 #编译说明
+
 ###编译环境
 	TeamTalk编译需要依赖一些最新的c++标准, 建议使用CentOS 7.0, 如果使用的是CentOS 6.x,需要将g++版本升至支持c++11特性,升级脚本可以使用自动安装脚本目录下的gcc_setup
 
