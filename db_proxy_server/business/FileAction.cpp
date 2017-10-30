@@ -19,6 +19,7 @@ namespace DB_PROXY {
     
     void hasOfflineFile(CImPdu* pPdu, uint32_t conn_uuid)
     {
+    	/*
         IM::File::IMFileHasOfflineReq msg;
         IM::File::IMFileHasOfflineRsp msgResp;
         if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
@@ -69,6 +70,89 @@ namespace DB_PROXY {
         {
             log("parse pb failed");
         }
+        */
+        
+        IM::File::IMFileHasOfflineReq msg;
+        IM::File::IMFileHasOfflineRsp msgResp;
+        if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+        {
+            CImPdu* pPduRes = new CImPdu;
+            
+            uint32_t nUserId = msg.user_id();
+            CFileModel* pModel = CFileModel::getInstance();
+            list<IM::BaseDefine::OfflineFileInfo> lsOffline;// 待下载文件
+			list<IM::BaseDefine::OfflineFileInfo> lsSent;// 待通知文件
+            pModel->getOfflineFile(nUserId, lsOffline);// get file that need to download
+            pModel->getHasSentFile(nUserId, lsSent);	// --------get peer has downloaded file 
+            
+            msgResp.set_user_id(nUserId);
+            for (list<IM::BaseDefine::OfflineFileInfo>::iterator it=lsOffline.begin();
+                 it != lsOffline.end(); ++it) {
+                IM::BaseDefine::OfflineFileInfo* pInfo = msgResp.add_offline_file_list();//自动增
+    
+                pInfo->set_from_user_id(it->from_user_id());
+                pInfo->set_task_id(it->task_id());
+                pInfo->set_file_name(it->file_name());
+                pInfo->set_file_size(it->file_size());
+				pInfo->set_file_md5(it->file_md5());			// add md5 
+				pInfo->set_status(IM::BaseDefine::FILE_NEED_DOWNLOAD);							// add 6/16
+            }
+				 int cut =0 ;
+			log("userId=%u,need file count=%u", nUserId,cut= msgResp.offline_file_list_size());
+			
+			for(auto it = lsSent.begin();it != lsSent.end(); ++it){   // ------add 10.16
+				IM::BaseDefine::OfflineFileInfo* pInfo = msgResp.add_offline_file_list();//自动增
+    
+                pInfo->set_from_user_id(it->from_user_id());
+                pInfo->set_task_id(it->task_id());
+                pInfo->set_file_name(it->file_name());
+                pInfo->set_file_size(it->file_size());
+				pInfo->set_file_md5(it->file_md5());			
+				pInfo->set_status(IM::BaseDefine::FILE_NEED_DISPLAY);// notify peer has downloaded		
+			}
+            
+            log("userId=%u,need display count=%u ,and all list.size = %u", nUserId, msgResp.offline_file_list_size() - cut,msgResp.offline_file_list_size());
+            
+            msgResp.set_attach_data(msg.attach_data());
+            pPduRes->SetPBMsg(&msgResp);
+            pPduRes->SetSeqNum(pPdu->GetSeqNum());
+            pPduRes->SetServiceId(IM::BaseDefine::SID_FILE);
+            pPduRes->SetCommandId(IM::BaseDefine::CID_FILE_HAS_OFFLINE_RES);
+            CProxyConn::AddResponsePdu(conn_uuid, pPduRes);
+
+
+			CDBConn* pDBConn = CDBManager::getInstance()->GetDBConn("teamtalk_slave");
+			//---- update status 1 to 2   // 当第二版完成时，此处删除，因为 必须等到client返回接受信息，才能改数据库状态
+			string strSql = "update IMTransmitFile set status=2 where toId="+int2string(nUserId) + " and status=1 ";
+			mysql_ping(pDBConn->GetMysql());
+			if (mysql_real_query(pDBConn->GetMysql(), strSql.c_str(),strSql.length())) {
+					log("mysql_real_query 1 to 2 failed: %s, sql: %s", mysql_error(pDBConn->GetMysql()), strSql.c_str());
+				
+				}else
+					{
+					  int ret = mysql_affected_rows(pDBConn->GetMysql());
+					  log(" mysql_affected 1 to 2 %d row ",ret);
+					}
+			//--- update status 4 to 5
+			 strSql = "update IMTransmitFile set status=5 where fromId="+int2string(nUserId) + " and status=4 ";
+			mysql_ping(pDBConn->GetMysql());
+			if (mysql_real_query(pDBConn->GetMysql(), strSql.c_str(),strSql.length())) {
+					log("mysql_real_query  4 to 5 failed: %s, sql: %s", mysql_error(pDBConn->GetMysql()), strSql.c_str());
+				
+				}else
+					{
+					  int ret = mysql_affected_rows(pDBConn->GetMysql());
+					  log(" mysql_affected 1 to 2 %d row ",ret);
+					}
+			
+        	CDBManager::getInstance()->RelDBConn(pDBConn);
+			
+        }
+        else
+        {
+            log("parse pb failed");
+        }
+        
     }
     
     void addOfflineFile(CImPdu* pPdu, uint32_t conn_uuid)

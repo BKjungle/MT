@@ -65,6 +65,41 @@ void CFileModel::getOfflineFile(uint32_t userId, list<IM::BaseDefine::OfflineFil
     }
 }
 
+// add 10.19 
+void CFileModel::getHasSentFile(uint32_t userId,list<IM::BaseDefine::OfflineFileInfo>& lsSent)
+{
+	CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_slave");
+    if (pDBConn)
+    {
+        string strSql = "select * from IMTransmitFile where fromId="+int2string(userId) + " and status=4 order by created";
+        CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
+        if(pResultSet)
+        {
+            while (pResultSet->Next())
+            {
+                IM::BaseDefine::OfflineFileInfo offlineFile;
+                offlineFile.set_from_user_id(pResultSet->GetInt("fromId"));
+                offlineFile.set_task_id(pResultSet->GetString("taskId"));
+                offlineFile.set_file_name(pResultSet->GetString("fileName"));
+                offlineFile.set_file_size(pResultSet->GetInt("size"));
+				offlineFile.set_file_md5(pResultSet->GetString("md5"));			// add md5 
+                lsSent.push_back(offlineFile);
+            }
+            delete pResultSet;
+        }
+        else
+        {
+            log("no result for:%s", strSql.c_str());
+        }
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_slave");
+    }
+}
+
 void CFileModel::addOfflineFile(uint32_t fromId, uint32_t toId, string& taskId, string& fileName, uint32_t fileSize, string& filemd5,uint32_t status)
 {
     CDBManager* pDBManager = CDBManager::getInstance();

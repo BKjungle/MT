@@ -80,7 +80,7 @@ void FileClientConn::Close() {
         FileClientConn* conn = (FileClientConn*)it_old->second;
 		if(conn != this && conn->Get_transfer_task_() == transfer_task_  && conn->Getmodetag() !=CLIENT_OFFLINE_DOWNLOAD_MOBILE)
 			{
-			conn->Set_transfer_task_(NULL);  //本身关闭同时，关闭其他端任务 地址
+			conn->Set_transfer_task_(NULL);  //本身关闭同时，关闭其他端(被顶替掉的客户端链接，否则其关闭链接时会free任务地址)任务地址置空
 			}
        	}    
 
@@ -245,7 +245,7 @@ void FileClientConn::_HandleClientFileLoginReq(CImPdu* pdu) {
         transfer_task = TransferTaskManager::GetInstance()->FindByTaskID(task_id);
         
         if (transfer_task == NULL) {
-			log(" transfer_task  is   NULL ---------------");
+						log(" transfer_task  is   NULL ---------------");
             if (mode == CLIENT_OFFLINE_DOWNLOAD || mode == CLIENT_OFFLINE_DOWNLOAD_MOBILE) {
                 // 文件不存在，检查是否是离线下载，有可能是文件服务器重启
                 // 尝试从磁盘加载

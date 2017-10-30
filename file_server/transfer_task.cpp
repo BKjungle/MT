@@ -505,7 +505,7 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
     do {
         if(mode == FILE_TYPE_OFFLINE_MOBILE)
 			{
-					log(" mode == ","FILE_TYPE_OFFLINE_MOBILE");
+					log(" mode == %s","FILE_TYPE_OFFLINE_MOBILE");
 				 if (state_mobile != kTransferTaskStateWaitingDownload && state_mobile != kTransferTaskStateDownloading) {
            			 log("state=%d error, need kTransferTaskStateWaitingDownload or kTransferTaskStateDownloading", state_mobile);
            				 break;
@@ -520,8 +520,11 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
 		if(mode == FILE_TYPE_OFFLINE_MOBILE)
 			{
 					if(state_mobile == kTransferTaskStateWaitingDownload) {
-			            if (transfered_idx_mobile != 0)
-			                transfered_idx_mobile = 0;
+			            if (transfered_idx_mobile != 0){
+			            	 transfered_idx_mobile = 0;
+			            	 log(" set transfered_idx_mobile = 0");
+			            }
+			               
 		           log(" 111111111"); 
 			            if (fp_mobile!=NULL) {
 			                fclose(fp_mobile);
@@ -557,7 +560,7 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
 			            }
 		        	}
 			}  				// add end 
-			else if(state_ == kTransferTaskStateWaitingDownload) {
+			else if(state_ == kTransferTaskStateWaitingDownload) {//pc下载
             if (transfered_idx_ != 0)
                 transfered_idx_ = 0;
             
@@ -624,10 +627,10 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
             break;
         }
         memset(tmpbuf, 0, data_size);
-		size_t size;
+				size_t size;
         if(mode == FILE_TYPE_OFFLINE_MOBILE)   	// 判断
-			size = fread(tmpbuf, 1, data_size, fp_mobile);
-		else 
+					size = fread(tmpbuf, 1, data_size, fp_mobile);
+				else 
         	size = fread(tmpbuf, 1, data_size, fp_);
         if (size != data_size) {
             log("Read %s  size error, data_size=%d, but read_size=%d",mode == 2?"client":"mobile", data_size, size);
@@ -641,11 +644,11 @@ int OfflineTransferTask::DoPullFileRequest(uint32_t user_id, uint32_t offset, ui
 
        if(FILE_TYPE_OFFLINE_MOBILE == mode) //  判断 
         		transfered_idx_mobile++;
-		else 
-		 		transfered_idx_++;
+			 else 
+		 				transfered_idx_++;
  
         SetLastUpdateTime();
-			log(" mode = %d, transfered_idx_mobile = %d ", mode,sengment_size_mobile);
+			log(" mode = %d, transfered_idx_mobile = %d ,sengment_size_mobile = %d", mode,transfered_idx_mobile,sengment_size_mobile);
         if(FILE_TYPE_OFFLINE_MOBILE == mode && transfered_idx_mobile == sengment_size_mobile)   // 判断
 		{
 			log(" mobile pull req end.");
