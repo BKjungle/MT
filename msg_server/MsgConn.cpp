@@ -321,6 +321,9 @@ void CMsgConn::HandlePdu(CImPdu* pPdu)
         case CID_LOGIN_REQ_QUERY_PUSH_SHIELD:
             _HandleQueryPushShieldRequest(pPdu);
             break;
+		case CID_LOGIN_REQ_VISIBLE_RANGE: // add 10.31
+			_HandleReqVisibleRange(pPdu);	
+			break;
         case CID_MSG_DATA:
             _HandleClientMsgData(pPdu);
             break;
@@ -1036,4 +1039,23 @@ void CMsgConn::_HandleQueryPushShieldRequest(CImPdu* pPdu) {
         pPdu->SetPBMsg(&msg);
         pDBConn->SendPdu(pPdu);
     }
+}
+
+// ---- add 10.31 for   用户之间的可见度查询， 转发到DB 
+void CMsgConn::_HandleReqVisibleRange(CImPdu* pPdu){
+	IM::BaseDefine::RelationListREQ		msg;
+
+	CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+    log("HandleReqVisibleRange, user_id=%u, userid_of_depart=%u, latest_update_time=%u. ", GetUserId(),msg.userid_of_depart(),msg.latest_update_time());
+    
+    CDBServConn* pConn = get_db_serv_conn();
+    if (pConn) {
+        CDbAttachData attach(ATTACH_TYPE_HANDLE, m_handle, 0);
+        msg.set_user_id(GetUserId());
+        msg.set_attach_data(attach.GetBuffer(), attach.GetLength());
+        pPdu->SetPBMsg(&msg);
+        pConn->SendPdu(pPdu);
+    }
+
+	
 }
