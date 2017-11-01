@@ -32,6 +32,7 @@ enum LoginCmdID{
     CID_LOGIN_RES_PUSH_SHIELD       = 0x010d; 	//
     CID_LOGIN_REQ_QUERY_PUSH_SHIELD = 0x010e; 	//
     CID_LOGIN_RES_QUERY_PUSH_SHIELD = 0x010f;
+	CID_LOGIN_REQ_VISIBLE_RANGE     = 0x0110;  // add 10.31
 }
 
 // command id for buddy list
@@ -375,3 +376,21 @@ message InfoNotify{
 	repeated IM.BaseDefine.OfflineFileInfo offline_file_list = 1; // add  6.15
 }
 
+
+
+// add 10.27
+message DepartmentRelation{
+	required uint32 departmentid =1; 
+	required bool relation = 2;
+	
+}
+ 
+message RelationListRSP{
+	repeated DepartmentRelation relationlist = 1; 
+}
+
+message RelationListREQ{
+	required uint32 userid = 1;
+	required uint32 userid_of_depart = 2;
+	required uint32 latest_update_time = 3; 
+}

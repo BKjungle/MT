@@ -33,6 +33,9 @@ void protobuf_ShutdownFile_IM_2eBaseDefine_2eproto() {
   delete DepartInfo::default_instance_;
   delete PushShieldStatus::default_instance_;
   delete InfoNotify::default_instance_;
+  delete DepartmentRelation::default_instance_;
+  delete RelationListRSP::default_instance_;
+  delete RelationListREQ::default_instance_;
 }
 
 #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
@@ -63,6 +66,9 @@ void protobuf_AddDesc_IM_2eBaseDefine_2eproto() {
   DepartInfo::default_instance_ = new DepartInfo();
   PushShieldStatus::default_instance_ = new PushShieldStatus();
   InfoNotify::default_instance_ = new InfoNotify();
+  DepartmentRelation::default_instance_ = new DepartmentRelation();
+  RelationListRSP::default_instance_ = new RelationListRSP();
+  RelationListREQ::default_instance_ = new RelationListREQ();
   IpAddr::default_instance_->InitAsDefaultInstance();
   UserInfo::default_instance_->InitAsDefaultInstance();
   ContactSessionInfo::default_instance_->InitAsDefaultInstance();
@@ -79,6 +85,9 @@ void protobuf_AddDesc_IM_2eBaseDefine_2eproto() {
   DepartInfo::default_instance_->InitAsDefaultInstance();
   PushShieldStatus::default_instance_->InitAsDefaultInstance();
   InfoNotify::default_instance_->InitAsDefaultInstance();
+  DepartmentRelation::default_instance_->InitAsDefaultInstance();
+  RelationListRSP::default_instance_->InitAsDefaultInstance();
+  RelationListREQ::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_IM_2eBaseDefine_2eproto);
 }
 
@@ -129,6 +138,7 @@ bool LoginCmdID_IsValid(int value) {
     case 269:
     case 270:
     case 271:
+    case 272:
       return true;
     default:
       return false;
@@ -5803,6 +5813,702 @@ void InfoNotify::Swap(InfoNotify* other) {
 
 ::std::string InfoNotify::GetTypeName() const {
   return "IM.BaseDefine.InfoNotify";
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int DepartmentRelation::kDepartmentidFieldNumber;
+const int DepartmentRelation::kRelationFieldNumber;
+#endif  // !_MSC_VER
+
+DepartmentRelation::DepartmentRelation()
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:IM.BaseDefine.DepartmentRelation)
+}
+
+void DepartmentRelation::InitAsDefaultInstance() {
+}
+
+DepartmentRelation::DepartmentRelation(const DepartmentRelation& from)
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:IM.BaseDefine.DepartmentRelation)
+}
+
+void DepartmentRelation::SharedCtor() {
+  _cached_size_ = 0;
+  departmentid_ = 0u;
+  relation_ = false;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+DepartmentRelation::~DepartmentRelation() {
+  // @@protoc_insertion_point(destructor:IM.BaseDefine.DepartmentRelation)
+  SharedDtor();
+}
+
+void DepartmentRelation::SharedDtor() {
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  if (this != &default_instance()) {
+  #else
+  if (this != default_instance_) {
+  #endif
+  }
+}
+
+void DepartmentRelation::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const DepartmentRelation& DepartmentRelation::default_instance() {
+#ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#else
+  if (default_instance_ == NULL) protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#endif
+  return *default_instance_;
+}
+
+DepartmentRelation* DepartmentRelation::default_instance_ = NULL;
+
+DepartmentRelation* DepartmentRelation::New() const {
+  return new DepartmentRelation;
+}
+
+void DepartmentRelation::Clear() {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<DepartmentRelation*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(departmentid_, relation_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->clear();
+}
+
+bool DepartmentRelation::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::io::StringOutputStream unknown_fields_string(
+      mutable_unknown_fields());
+  ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
+      &unknown_fields_string);
+  // @@protoc_insertion_point(parse_start:IM.BaseDefine.DepartmentRelation)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required uint32 departmentid = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &departmentid_)));
+          set_has_departmentid();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_relation;
+        break;
+      }
+
+      // required bool relation = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_relation:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &relation_)));
+          set_has_relation();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(
+            input, tag, &unknown_fields_stream));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:IM.BaseDefine.DepartmentRelation)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:IM.BaseDefine.DepartmentRelation)
+  return false;
+#undef DO_
+}
+
+void DepartmentRelation::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:IM.BaseDefine.DepartmentRelation)
+  // required uint32 departmentid = 1;
+  if (has_departmentid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->departmentid(), output);
+  }
+
+  // required bool relation = 2;
+  if (has_relation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->relation(), output);
+  }
+
+  output->WriteRaw(unknown_fields().data(),
+                   unknown_fields().size());
+  // @@protoc_insertion_point(serialize_end:IM.BaseDefine.DepartmentRelation)
+}
+
+int DepartmentRelation::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint32 departmentid = 1;
+    if (has_departmentid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->departmentid());
+    }
+
+    // required bool relation = 2;
+    if (has_relation()) {
+      total_size += 1 + 1;
+    }
+
+  }
+  total_size += unknown_fields().size();
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void DepartmentRelation::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const DepartmentRelation*>(&from));
+}
+
+void DepartmentRelation::MergeFrom(const DepartmentRelation& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_departmentid()) {
+      set_departmentid(from.departmentid());
+    }
+    if (from.has_relation()) {
+      set_relation(from.relation());
+    }
+  }
+  mutable_unknown_fields()->append(from.unknown_fields());
+}
+
+void DepartmentRelation::CopyFrom(const DepartmentRelation& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DepartmentRelation::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+
+  return true;
+}
+
+void DepartmentRelation::Swap(DepartmentRelation* other) {
+  if (other != this) {
+    std::swap(departmentid_, other->departmentid_);
+    std::swap(relation_, other->relation_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.swap(other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::std::string DepartmentRelation::GetTypeName() const {
+  return "IM.BaseDefine.DepartmentRelation";
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RelationListRSP::kRelationlistFieldNumber;
+#endif  // !_MSC_VER
+
+RelationListRSP::RelationListRSP()
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:IM.BaseDefine.RelationListRSP)
+}
+
+void RelationListRSP::InitAsDefaultInstance() {
+}
+
+RelationListRSP::RelationListRSP(const RelationListRSP& from)
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:IM.BaseDefine.RelationListRSP)
+}
+
+void RelationListRSP::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RelationListRSP::~RelationListRSP() {
+  // @@protoc_insertion_point(destructor:IM.BaseDefine.RelationListRSP)
+  SharedDtor();
+}
+
+void RelationListRSP::SharedDtor() {
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  if (this != &default_instance()) {
+  #else
+  if (this != default_instance_) {
+  #endif
+  }
+}
+
+void RelationListRSP::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const RelationListRSP& RelationListRSP::default_instance() {
+#ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#else
+  if (default_instance_ == NULL) protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#endif
+  return *default_instance_;
+}
+
+RelationListRSP* RelationListRSP::default_instance_ = NULL;
+
+RelationListRSP* RelationListRSP::New() const {
+  return new RelationListRSP;
+}
+
+void RelationListRSP::Clear() {
+  relationlist_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->clear();
+}
+
+bool RelationListRSP::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::io::StringOutputStream unknown_fields_string(
+      mutable_unknown_fields());
+  ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
+      &unknown_fields_string);
+  // @@protoc_insertion_point(parse_start:IM.BaseDefine.RelationListRSP)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .IM.BaseDefine.DepartmentRelation relationlist = 1;
+      case 1: {
+        if (tag == 10) {
+         parse_relationlist:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_relationlist()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(10)) goto parse_relationlist;
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(
+            input, tag, &unknown_fields_stream));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:IM.BaseDefine.RelationListRSP)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:IM.BaseDefine.RelationListRSP)
+  return false;
+#undef DO_
+}
+
+void RelationListRSP::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:IM.BaseDefine.RelationListRSP)
+  // repeated .IM.BaseDefine.DepartmentRelation relationlist = 1;
+  for (int i = 0; i < this->relationlist_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      1, this->relationlist(i), output);
+  }
+
+  output->WriteRaw(unknown_fields().data(),
+                   unknown_fields().size());
+  // @@protoc_insertion_point(serialize_end:IM.BaseDefine.RelationListRSP)
+}
+
+int RelationListRSP::ByteSize() const {
+  int total_size = 0;
+
+  // repeated .IM.BaseDefine.DepartmentRelation relationlist = 1;
+  total_size += 1 * this->relationlist_size();
+  for (int i = 0; i < this->relationlist_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->relationlist(i));
+  }
+
+  total_size += unknown_fields().size();
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RelationListRSP::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const RelationListRSP*>(&from));
+}
+
+void RelationListRSP::MergeFrom(const RelationListRSP& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  relationlist_.MergeFrom(from.relationlist_);
+  mutable_unknown_fields()->append(from.unknown_fields());
+}
+
+void RelationListRSP::CopyFrom(const RelationListRSP& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RelationListRSP::IsInitialized() const {
+
+  if (!::google::protobuf::internal::AllAreInitialized(this->relationlist())) return false;
+  return true;
+}
+
+void RelationListRSP::Swap(RelationListRSP* other) {
+  if (other != this) {
+    relationlist_.Swap(&other->relationlist_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.swap(other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::std::string RelationListRSP::GetTypeName() const {
+  return "IM.BaseDefine.RelationListRSP";
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RelationListREQ::kUseridFieldNumber;
+const int RelationListREQ::kUseridOfDepartFieldNumber;
+const int RelationListREQ::kLatestUpdateTimeFieldNumber;
+#endif  // !_MSC_VER
+
+RelationListREQ::RelationListREQ()
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:IM.BaseDefine.RelationListREQ)
+}
+
+void RelationListREQ::InitAsDefaultInstance() {
+}
+
+RelationListREQ::RelationListREQ(const RelationListREQ& from)
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:IM.BaseDefine.RelationListREQ)
+}
+
+void RelationListREQ::SharedCtor() {
+  _cached_size_ = 0;
+  userid_ = 0u;
+  userid_of_depart_ = 0u;
+  latest_update_time_ = 0u;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RelationListREQ::~RelationListREQ() {
+  // @@protoc_insertion_point(destructor:IM.BaseDefine.RelationListREQ)
+  SharedDtor();
+}
+
+void RelationListREQ::SharedDtor() {
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  if (this != &default_instance()) {
+  #else
+  if (this != default_instance_) {
+  #endif
+  }
+}
+
+void RelationListREQ::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const RelationListREQ& RelationListREQ::default_instance() {
+#ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#else
+  if (default_instance_ == NULL) protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+#endif
+  return *default_instance_;
+}
+
+RelationListREQ* RelationListREQ::default_instance_ = NULL;
+
+RelationListREQ* RelationListREQ::New() const {
+  return new RelationListREQ;
+}
+
+void RelationListREQ::Clear() {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<RelationListREQ*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(userid_, latest_update_time_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->clear();
+}
+
+bool RelationListREQ::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::io::StringOutputStream unknown_fields_string(
+      mutable_unknown_fields());
+  ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
+      &unknown_fields_string);
+  // @@protoc_insertion_point(parse_start:IM.BaseDefine.RelationListREQ)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required uint32 userid = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &userid_)));
+          set_has_userid();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_userid_of_depart;
+        break;
+      }
+
+      // required uint32 userid_of_depart = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_userid_of_depart:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &userid_of_depart_)));
+          set_has_userid_of_depart();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_latest_update_time;
+        break;
+      }
+
+      // required uint32 latest_update_time = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_latest_update_time:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &latest_update_time_)));
+          set_has_latest_update_time();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(
+            input, tag, &unknown_fields_stream));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:IM.BaseDefine.RelationListREQ)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:IM.BaseDefine.RelationListREQ)
+  return false;
+#undef DO_
+}
+
+void RelationListREQ::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:IM.BaseDefine.RelationListREQ)
+  // required uint32 userid = 1;
+  if (has_userid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->userid(), output);
+  }
+
+  // required uint32 userid_of_depart = 2;
+  if (has_userid_of_depart()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->userid_of_depart(), output);
+  }
+
+  // required uint32 latest_update_time = 3;
+  if (has_latest_update_time()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->latest_update_time(), output);
+  }
+
+  output->WriteRaw(unknown_fields().data(),
+                   unknown_fields().size());
+  // @@protoc_insertion_point(serialize_end:IM.BaseDefine.RelationListREQ)
+}
+
+int RelationListREQ::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint32 userid = 1;
+    if (has_userid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->userid());
+    }
+
+    // required uint32 userid_of_depart = 2;
+    if (has_userid_of_depart()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->userid_of_depart());
+    }
+
+    // required uint32 latest_update_time = 3;
+    if (has_latest_update_time()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->latest_update_time());
+    }
+
+  }
+  total_size += unknown_fields().size();
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RelationListREQ::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const RelationListREQ*>(&from));
+}
+
+void RelationListREQ::MergeFrom(const RelationListREQ& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_userid()) {
+      set_userid(from.userid());
+    }
+    if (from.has_userid_of_depart()) {
+      set_userid_of_depart(from.userid_of_depart());
+    }
+    if (from.has_latest_update_time()) {
+      set_latest_update_time(from.latest_update_time());
+    }
+  }
+  mutable_unknown_fields()->append(from.unknown_fields());
+}
+
+void RelationListREQ::CopyFrom(const RelationListREQ& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RelationListREQ::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+
+  return true;
+}
+
+void RelationListREQ::Swap(RelationListREQ* other) {
+  if (other != this) {
+    std::swap(userid_, other->userid_);
+    std::swap(userid_of_depart_, other->userid_of_depart_);
+    std::swap(latest_update_time_, other->latest_update_time_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.swap(other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::std::string RelationListREQ::GetTypeName() const {
+  return "IM.BaseDefine.RelationListREQ";
 }
 
 

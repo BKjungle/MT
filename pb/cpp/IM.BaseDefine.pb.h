@@ -49,6 +49,9 @@ class OfflineFileInfo;
 class DepartInfo;
 class PushShieldStatus;
 class InfoNotify;
+class DepartmentRelation;
+class RelationListRSP;
+class RelationListREQ;
 
 enum ServiceID {
   SID_LOGIN = 1,
@@ -80,11 +83,12 @@ enum LoginCmdID {
   CID_LOGIN_REQ_PUSH_SHIELD = 268,
   CID_LOGIN_RES_PUSH_SHIELD = 269,
   CID_LOGIN_REQ_QUERY_PUSH_SHIELD = 270,
-  CID_LOGIN_RES_QUERY_PUSH_SHIELD = 271
+  CID_LOGIN_RES_QUERY_PUSH_SHIELD = 271,
+  CID_LOGIN_REQ_VISIBLE_RANGE = 272
 };
 bool LoginCmdID_IsValid(int value);
 const LoginCmdID LoginCmdID_MIN = CID_LOGIN_REQ_MSGSERVER;
-const LoginCmdID LoginCmdID_MAX = CID_LOGIN_RES_QUERY_PUSH_SHIELD;
+const LoginCmdID LoginCmdID_MAX = CID_LOGIN_REQ_VISIBLE_RANGE;
 const int LoginCmdID_ARRAYSIZE = LoginCmdID_MAX + 1;
 
 enum BuddyListCmdID {
@@ -2508,6 +2512,312 @@ class InfoNotify : public ::google::protobuf::MessageLite {
 
   void InitAsDefaultInstance();
   static InfoNotify* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DepartmentRelation : public ::google::protobuf::MessageLite {
+ public:
+  DepartmentRelation();
+  virtual ~DepartmentRelation();
+
+  DepartmentRelation(const DepartmentRelation& from);
+
+  inline DepartmentRelation& operator=(const DepartmentRelation& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const DepartmentRelation& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const DepartmentRelation* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(DepartmentRelation* other);
+
+  // implements Message ----------------------------------------------
+
+  DepartmentRelation* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const DepartmentRelation& from);
+  void MergeFrom(const DepartmentRelation& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 departmentid = 1;
+  inline bool has_departmentid() const;
+  inline void clear_departmentid();
+  static const int kDepartmentidFieldNumber = 1;
+  inline ::google::protobuf::uint32 departmentid() const;
+  inline void set_departmentid(::google::protobuf::uint32 value);
+
+  // required bool relation = 2;
+  inline bool has_relation() const;
+  inline void clear_relation();
+  static const int kRelationFieldNumber = 2;
+  inline bool relation() const;
+  inline void set_relation(bool value);
+
+  // @@protoc_insertion_point(class_scope:IM.BaseDefine.DepartmentRelation)
+ private:
+  inline void set_has_departmentid();
+  inline void clear_has_departmentid();
+  inline void set_has_relation();
+  inline void clear_has_relation();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 departmentid_;
+  bool relation_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eBaseDefine_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eBaseDefine_2eproto();
+
+  void InitAsDefaultInstance();
+  static DepartmentRelation* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class RelationListRSP : public ::google::protobuf::MessageLite {
+ public:
+  RelationListRSP();
+  virtual ~RelationListRSP();
+
+  RelationListRSP(const RelationListRSP& from);
+
+  inline RelationListRSP& operator=(const RelationListRSP& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const RelationListRSP& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const RelationListRSP* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(RelationListRSP* other);
+
+  // implements Message ----------------------------------------------
+
+  RelationListRSP* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const RelationListRSP& from);
+  void MergeFrom(const RelationListRSP& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .IM.BaseDefine.DepartmentRelation relationlist = 1;
+  inline int relationlist_size() const;
+  inline void clear_relationlist();
+  static const int kRelationlistFieldNumber = 1;
+  inline const ::IM::BaseDefine::DepartmentRelation& relationlist(int index) const;
+  inline ::IM::BaseDefine::DepartmentRelation* mutable_relationlist(int index);
+  inline ::IM::BaseDefine::DepartmentRelation* add_relationlist();
+  inline const ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::DepartmentRelation >&
+      relationlist() const;
+  inline ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::DepartmentRelation >*
+      mutable_relationlist();
+
+  // @@protoc_insertion_point(class_scope:IM.BaseDefine.RelationListRSP)
+ private:
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::DepartmentRelation > relationlist_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eBaseDefine_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eBaseDefine_2eproto();
+
+  void InitAsDefaultInstance();
+  static RelationListRSP* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class RelationListREQ : public ::google::protobuf::MessageLite {
+ public:
+  RelationListREQ();
+  virtual ~RelationListREQ();
+
+  RelationListREQ(const RelationListREQ& from);
+
+  inline RelationListREQ& operator=(const RelationListREQ& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const RelationListREQ& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const RelationListREQ* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(RelationListREQ* other);
+
+  // implements Message ----------------------------------------------
+
+  RelationListREQ* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const RelationListREQ& from);
+  void MergeFrom(const RelationListREQ& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 userid = 1;
+  inline bool has_userid() const;
+  inline void clear_userid();
+  static const int kUseridFieldNumber = 1;
+  inline ::google::protobuf::uint32 userid() const;
+  inline void set_userid(::google::protobuf::uint32 value);
+
+  // required uint32 userid_of_depart = 2;
+  inline bool has_userid_of_depart() const;
+  inline void clear_userid_of_depart();
+  static const int kUseridOfDepartFieldNumber = 2;
+  inline ::google::protobuf::uint32 userid_of_depart() const;
+  inline void set_userid_of_depart(::google::protobuf::uint32 value);
+
+  // required uint32 latest_update_time = 3;
+  inline bool has_latest_update_time() const;
+  inline void clear_latest_update_time();
+  static const int kLatestUpdateTimeFieldNumber = 3;
+  inline ::google::protobuf::uint32 latest_update_time() const;
+  inline void set_latest_update_time(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:IM.BaseDefine.RelationListREQ)
+ private:
+  inline void set_has_userid();
+  inline void clear_has_userid();
+  inline void set_has_userid_of_depart();
+  inline void clear_has_userid_of_depart();
+  inline void set_has_latest_update_time();
+  inline void clear_has_latest_update_time();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 userid_;
+  ::google::protobuf::uint32 userid_of_depart_;
+  ::google::protobuf::uint32 latest_update_time_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eBaseDefine_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eBaseDefine_2eproto();
+
+  void InitAsDefaultInstance();
+  static RelationListREQ* default_instance_;
 };
 // ===================================================================
 
@@ -5314,6 +5624,168 @@ inline ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::OfflineFileInfo >
 InfoNotify::mutable_offline_file_list() {
   // @@protoc_insertion_point(field_mutable_list:IM.BaseDefine.InfoNotify.offline_file_list)
   return &offline_file_list_;
+}
+
+// -------------------------------------------------------------------
+
+// DepartmentRelation
+
+// required uint32 departmentid = 1;
+inline bool DepartmentRelation::has_departmentid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void DepartmentRelation::set_has_departmentid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void DepartmentRelation::clear_has_departmentid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void DepartmentRelation::clear_departmentid() {
+  departmentid_ = 0u;
+  clear_has_departmentid();
+}
+inline ::google::protobuf::uint32 DepartmentRelation::departmentid() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.DepartmentRelation.departmentid)
+  return departmentid_;
+}
+inline void DepartmentRelation::set_departmentid(::google::protobuf::uint32 value) {
+  set_has_departmentid();
+  departmentid_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.DepartmentRelation.departmentid)
+}
+
+// required bool relation = 2;
+inline bool DepartmentRelation::has_relation() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void DepartmentRelation::set_has_relation() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void DepartmentRelation::clear_has_relation() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void DepartmentRelation::clear_relation() {
+  relation_ = false;
+  clear_has_relation();
+}
+inline bool DepartmentRelation::relation() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.DepartmentRelation.relation)
+  return relation_;
+}
+inline void DepartmentRelation::set_relation(bool value) {
+  set_has_relation();
+  relation_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.DepartmentRelation.relation)
+}
+
+// -------------------------------------------------------------------
+
+// RelationListRSP
+
+// repeated .IM.BaseDefine.DepartmentRelation relationlist = 1;
+inline int RelationListRSP::relationlist_size() const {
+  return relationlist_.size();
+}
+inline void RelationListRSP::clear_relationlist() {
+  relationlist_.Clear();
+}
+inline const ::IM::BaseDefine::DepartmentRelation& RelationListRSP::relationlist(int index) const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.RelationListRSP.relationlist)
+  return relationlist_.Get(index);
+}
+inline ::IM::BaseDefine::DepartmentRelation* RelationListRSP::mutable_relationlist(int index) {
+  // @@protoc_insertion_point(field_mutable:IM.BaseDefine.RelationListRSP.relationlist)
+  return relationlist_.Mutable(index);
+}
+inline ::IM::BaseDefine::DepartmentRelation* RelationListRSP::add_relationlist() {
+  // @@protoc_insertion_point(field_add:IM.BaseDefine.RelationListRSP.relationlist)
+  return relationlist_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::DepartmentRelation >&
+RelationListRSP::relationlist() const {
+  // @@protoc_insertion_point(field_list:IM.BaseDefine.RelationListRSP.relationlist)
+  return relationlist_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::IM::BaseDefine::DepartmentRelation >*
+RelationListRSP::mutable_relationlist() {
+  // @@protoc_insertion_point(field_mutable_list:IM.BaseDefine.RelationListRSP.relationlist)
+  return &relationlist_;
+}
+
+// -------------------------------------------------------------------
+
+// RelationListREQ
+
+// required uint32 userid = 1;
+inline bool RelationListREQ::has_userid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RelationListREQ::set_has_userid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RelationListREQ::clear_has_userid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RelationListREQ::clear_userid() {
+  userid_ = 0u;
+  clear_has_userid();
+}
+inline ::google::protobuf::uint32 RelationListREQ::userid() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.RelationListREQ.userid)
+  return userid_;
+}
+inline void RelationListREQ::set_userid(::google::protobuf::uint32 value) {
+  set_has_userid();
+  userid_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.RelationListREQ.userid)
+}
+
+// required uint32 userid_of_depart = 2;
+inline bool RelationListREQ::has_userid_of_depart() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void RelationListREQ::set_has_userid_of_depart() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void RelationListREQ::clear_has_userid_of_depart() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void RelationListREQ::clear_userid_of_depart() {
+  userid_of_depart_ = 0u;
+  clear_has_userid_of_depart();
+}
+inline ::google::protobuf::uint32 RelationListREQ::userid_of_depart() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.RelationListREQ.userid_of_depart)
+  return userid_of_depart_;
+}
+inline void RelationListREQ::set_userid_of_depart(::google::protobuf::uint32 value) {
+  set_has_userid_of_depart();
+  userid_of_depart_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.RelationListREQ.userid_of_depart)
+}
+
+// required uint32 latest_update_time = 3;
+inline bool RelationListREQ::has_latest_update_time() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void RelationListREQ::set_has_latest_update_time() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void RelationListREQ::clear_has_latest_update_time() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void RelationListREQ::clear_latest_update_time() {
+  latest_update_time_ = 0u;
+  clear_has_latest_update_time();
+}
+inline ::google::protobuf::uint32 RelationListREQ::latest_update_time() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.RelationListREQ.latest_update_time)
+  return latest_update_time_;
+}
+inline void RelationListREQ::set_latest_update_time(::google::protobuf::uint32 value) {
+  set_has_latest_update_time();
+  latest_update_time_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.RelationListREQ.latest_update_time)
 }
 
 
