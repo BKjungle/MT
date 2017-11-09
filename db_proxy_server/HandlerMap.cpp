@@ -66,6 +66,7 @@ void CHandlerMap::Init()
 	m_handler_map.insert(make_pair(uint32_t(CID_OTHER_VALIDATE_REQ), DB_PROXY::doLogin));
     m_handler_map.insert(make_pair(uint32_t(CID_LOGIN_REQ_PUSH_SHIELD), DB_PROXY::doPushShield));
     m_handler_map.insert(make_pair(uint32_t(CID_LOGIN_REQ_QUERY_PUSH_SHIELD), DB_PROXY::doQueryPushShield));
+    m_handler_map.insert(make_pair(uint32_t(CID_LOGIN_REQ_VISIBLE_RANGE), DB_PROXY::doQueryVisibleRange)); // add 11.1
     
     // recent session
     m_handler_map.insert(make_pair(uint32_t(CID_BUDDY_LIST_RECENT_CONTACT_SESSION_REQUEST), DB_PROXY::getRecentSession));

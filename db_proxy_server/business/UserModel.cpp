@@ -434,3 +434,35 @@ bool CUserModel::getPushShield(uint32_t user_id, uint32_t* shield_status) {
     return rv;
 }
 
+
+// add 11.3
+bool CUserModel::getRelatonList(uint32_t userid_of_depart,list<IM::BaseDefine::DepartmentRelation> & rel){
+	
+    CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_slave");
+    if (pDBConn)
+    {
+        string strSql ;
+        strSql = "select id, " + int2string(userid_of_depart) + " from DepartmentRelation";
+
+        CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
+        if(pResultSet)
+        {
+            while (pResultSet->Next()) {
+				IM::BaseDefine::DepartmentRelation dep;
+				dep.set_departmentid(pResultSet->GetInt("id"));	
+				dep.set_relation(pResultSet->GetString((int2string(userid_of_depart).c_str())));
+				rel.push_back(dep);
+  		}
+            delete pResultSet;
+        }
+        else
+        {
+            log(" no result set for sql:%s", strSql.c_str());
+        }
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+		 log("no db connection for teamtalk_slave");
+    }
+

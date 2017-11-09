@@ -34,7 +34,7 @@ public:
     bool getUserSingInfo(uint32_t user_id, string* sign_info);
     bool updatePushShield(uint32_t user_id, uint32_t shield_status);
     bool getPushShield(uint32_t user_id, uint32_t* shield_status);
-
+	bool getRelatonList(uint32_t userid_of_depart,list<IM::BaseDefine::DepartmentRelation> & rel); // add 11.3 
 private:
     CUserModel();
 private:

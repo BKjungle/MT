@@ -89,12 +89,12 @@ msgResp.set_user_id(from_user_id);
             
 			log("--------------------- nLastTime =  %d , nLastUpdate =  %d ", nLastTime ,nLastUpdate);
             list<IM::BaseDefine::UserInfo> lsUsers;
-            if( nLastUpdate > nLastTime)
-            {
+			if(nLastUpdate > nLastTime){
                 list<uint32_t> lsIds;
                 CUserModel::getInstance()->getChangedId(nLastTime, lsIds);
                 CUserModel::getInstance()->getUsers(lsIds, lsUsers);
-            }
+			}
+
             msgResp.set_user_id(nReqId);
             msgResp.set_latest_update_time(nLastTime);
             for (list<IM::BaseDefine::UserInfo>::iterator it=lsUsers.begin();
@@ -222,5 +222,44 @@ msgResp.set_user_id(from_user_id);
             log("doQueryPushShield: IMQueryPushShieldReq ParseFromArray failed!!!");
         }
     }
+
+// add 11.2 
+
+	void doQueryVisibleRange(CImPdu* pPdu,uint32_t conn_uuid) // add 11.1
+	{
+		IM::BaseDefine::RelationListREQ  req;	
+		IM::BaseDefine::RelationListRSP  rsp;	  		
+		list<IM::BaseDefine::DepartmentRelation> rel;
+        if(req.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength())) {
+            uint32_t user_id = req.userid();
+            uint32_t userid_of_depart = req.userid_of_depart();
+			uint32_t latest_update_time = req.latest_update_time();
+			log(" userid = %u,userid_of_depart = %u,latest_update_time = %u",user_id,userid_of_depart,latest_update_time);
+            
+           bool result = CUserModel::getInstance()->getRelatonList(userid_of_depart, rel);
+            
+            if (result) {
+				for(auto it = rel.begin();it != rel.end(); it++)
+					{
+						  IM::BaseDefine::DepartmentRelation * pDepartR = rsp.add_relationlist();
+							pDepartR->set_departmentid((*it).departmentid());
+							pDepartR->set_relation((*it).relation());  
+					}
+                log("doQueryVisibleRange  sucess, user_id=%u, userid_of_depart=%u", user_id,userid_of_depart);
+            } else {
+                log("  doQueryVisibleRange   false, user_id=%u", user_id);
+            }
+            
+            
+            CImPdu* pdu_resp = new CImPdu();
+            pdu_resp->SetPBMsg(&rsp);
+            pdu_resp->SetSeqNum(pPdu->GetSeqNum());
+            pdu_resp->SetServiceId(IM::BaseDefine::SID_LOGIN);
+            pdu_resp->SetCommandId(IM::BaseDefine::CID_LOGIN_REQ_VISIBLE_RANGE);
+            CProxyConn::AddResponsePdu(conn_uuid, pdu_resp);
+        } else {
+            log("doQueryVisibleRange : IMQueryVisibleRange ParseFromArray failed!!!");
+	}
+}
 };
 

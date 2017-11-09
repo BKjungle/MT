@@ -257,7 +257,30 @@ void* CSyncCenter::doSyncGroupChat(void* arg)
             }
         }
 //    } while (!m_pInstance->m_pCondSync->waitTime(5*1000));
-    } while (m_pInstance->m_bSyncGroupChatWaitting && !(m_pInstance->m_pCondGroupChat->waitTime(5*1000)));
+	// add  to reset m_nLastUpdate (uee in pull userlist)	
+		       {
+        	CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_slave");
+        	uint32_t  SycLastUpdate = m_pInstance->getLastUpdate();
+            string strSql = "select  updated from IMUser  where status=0 and updated >=" + int2string(SycLastUpdate);
+            CResultSet* pResult = pDBConn->ExecuteQuery(strSql.c_str());
+            if(pResult)
+            {
+                while (pResult->Next()) {
+	                    uint32_t nLastUpdate = pResult->GetInt("updated");
+		                if(SycLastUpdate < nLastUpdate)
+		                {
+		                    SycLastUpdate = nLastUpdate;
+		                }
+	            	}
+           }
+				log(" find  the lastupdate is %u =-=",SycLastUpdate);
+				m_pInstance->updateTotalUpdate(SycLastUpdate);
+                delete pResult;
+				pDBManager->RelDBConn(pDBConn);
+		}
+	// add end 
+	
+    } while (m_pInstance->m_bSyncGroupChatWaitting && !(m_pInstance->m_pCondGroupChat->waitTime(5*1000)));// 等待五秒
 //    } while(m_pInstance->m_bSyncGroupChatWaitting);
     m_bSyncGroupChatRuning = false;
     return NULL;
