@@ -1051,8 +1051,7 @@ void CMsgConn::_HandleReqVisibleRange(CImPdu* pPdu){
     CDBServConn* pConn = get_db_serv_conn();
     if (pConn) {
         CDbAttachData attach(ATTACH_TYPE_HANDLE, m_handle, 0);
-        msg.set_user_id(GetUserId());
-        msg.set_attach_data(attach.GetBuffer(), attach.GetLength());
+        msg.set_userid(GetUserId());
         pPdu->SetPBMsg(&msg);
         pConn->SendPdu(pPdu);
     }
