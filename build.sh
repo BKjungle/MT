@@ -142,6 +142,24 @@ build() {
         exit;
     fi
 
+	cd ../teamtalk_websocket_server/websocket
+    cmake .
+    make
+    if [ $? -eq 0 ]; then
+        echo "make websocket successed";
+    else
+        echo "make websocket failed";
+        exit;
+    fi
+	cd ../
+	cmake .
+	make 
+    if [ $? -eq 0 ]; then
+        echo "make teamtalk_websocket_server successed";
+    else
+        echo "make teamtalk_websocket_server failed";
+        exit;
+    fi
 	cd ../
 
     build_version=im-server-$1

@@ -7,7 +7,7 @@
 #include "ConfigFileReader.h"
 #include "DBPool.h"
 #include "DelFile.h"
-
+#include <vector>
 #define mpath  "./offline_file"
 
 
@@ -15,6 +15,7 @@ using namespace std;
 
 //=====================
 MYSQL* 		m_mysql;
+MYSQL*		m_mysql_d;
 int flag  = 0;
 bool pDBInit(const char* db_host,unsigned int db_port,const char* db_dbname,
 				const char* db_username,const char *db_password );
@@ -24,7 +25,7 @@ void timer(int sig)
         if(SIGALRM == sig)  
         {  
             log("timer\n");  
-            alarm(3);       //we continue set the timer  
+            alarm(10);       //we continue set the timer  
             if(1 == flag)
             	{
             		log("del server is busy ");
@@ -46,10 +47,10 @@ void timer(int sig)
         string str_flagtime;
         stream << flagtime;
         stream >> str_flagtime;
-        string sql_query = "select fileName,taskId from IMTransmitFile where status=0 and created<="+ str_flagtime+ ";";
+        string sql_query = "select fileName,taskId from IMTransmitFile where status=0 and deleted=0 created<="+ str_flagtime+ ";";
         //----QUERY
         mysql_ping(m_mysql);
-
+		mysql_pint(m_mysql_d);
 		if (mysql_real_query(m_mysql, sql_query.c_str(), sql_query.length())) {	// 执行
 			log("mysql_real_query failed: %s, sql: %s", mysql_error(m_mysql), sql_query.c_str());
 			return ;
@@ -70,8 +71,14 @@ void timer(int sig)
 				while(result_set->Next())
 				{
 					log("7-------------%s",result_set->GetString("taskId"));					
-					del_file(result_set->GetString("taskId"));
-					log("delete file %s ok ",result_set->GetString("fileName"));
+					string set_file_d = "update " // 待处理
+					if (mysql_real_query(m_mysql, sql_query.c_str(), sql_query.length())) {	// 执行
+
+						log("mysql_real_query failed: %s, sql: %s", mysql_error(m_mysql), sql_query.c_str());
+						return ;
+					}
+					if(del_file(result_set->GetString("taskId")))
+						log("delete file %s ok ",result_set->GetString("fileName"));
 				}
 				delete result_set;  // contain mysql_free_result();
 				log("-------------88");
@@ -142,24 +149,25 @@ bool pDBInit(const char* db_host,unsigned int db_port,const char* db_dbname,
 {
 	
 		log(" pDBInit  start---------------1  ");
-	m_mysql = mysql_init(NULL);
-	if (!m_mysql) {
+	vector<MYSQL*> mysql_2{m_mysql,m_mysql_d};
+	for(MYSQL* &mq:mysql_2 ){
+
+		mq = mysql_init(NULL);
+		if (!mq) {
 		log("mysql_init failed");
-		return false;
+				return false;
+		}
+
+			log(" pDBInit  start---------------2  ");
+			my_bool reconnect = true;
+			mysql_options(mq, MYSQL_OPT_RECONNECT, &reconnect);
+			mysql_options(mq, MYSQL_SET_CHARSET_NAME, "utf8mb4");
+
+			if (!mysql_real_connect(mq,db_host, db_username,db_password,db_dbname, db_port, NULL, 0)) {
+				log("mysql_real_connect failed: %s", mysql_error(m_mysql));
+				return false;
+			}
 	}
-
-		log(" pDBInit  start---------------2  ");
-	my_bool reconnect = true;
-	mysql_options(m_mysql, MYSQL_OPT_RECONNECT, &reconnect);
-		log(" pDBInit  start---------------3  ");
-	mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
-
-		log(" pDBInit  start--------------4 ");
-	if (!mysql_real_connect(m_mysql,db_host, db_username,db_password,db_dbname, db_port, NULL, 0)) {
-		log("mysql_real_connect failed: %s", mysql_error(m_mysql));
-		return false;
-	}
-
 
 		log(" pDBInit  start---------------5  ");
 	

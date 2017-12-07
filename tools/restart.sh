@@ -58,8 +58,11 @@ case $1 in
 	clientRobot_EVP)
 	restart $1
 	;;
+	websocket_server)
+	restart $1
+	;;
 	*)
 		echo "Usage: "
-		echo "  ./restart.sh (login_server | msg_server | route_server | http_msg_server | file_server | push_server | clientRobot_EVP | msfs | db_proxy_server )"
+		echo "  ./restart.sh (login_server | msg_server | route_server | http_msg_server | file_server | push_server | clientRobot_EVP | msfs | db_proxy_server |websocket_server )"
 		;;
 esac
