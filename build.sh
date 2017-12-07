@@ -178,12 +178,15 @@ build() {
     mkdir -p ../$build_version/db_proxy_server
     mkdir -p ../$build_version/clientRobot_EVP
     mkdir -p ../$build_version/lib
+    mkdir -p ../$build_version/websocket_server
 
     cp login_server/loginserver.conf ../$build_version/login_server/
     cp login_server/login_server ../$build_version/login_server/
     
 	cp clientRobot_EVP/clientRobot_EVP.conf ../$build_version/clientRobot_EVP/
     cp clientRobot_EVP/clientRobot_EVP ../$build_version/clientRobot_EVP/
+	cp teamtalk_websocket_server/websocketserver.conf ../$build_version/websocket_server/
+    cp teamtalk_websocket_server/websocket_server ../$build_version/websocket_server/
 
     cp route_server/route_server ../$build_version/route_server/
     cp route_server/routeserver.conf ../$build_version/route_server/
@@ -241,6 +244,8 @@ clean() {
 	cd ../db_proxy_server
 	make clean
 	cd ../clientRobot_EVP
+	make clean
+	cd ../teamtalk_websocket_server
 	make clean
 }
 
